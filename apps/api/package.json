@@ -8,7 +8,10 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "esbuild src/server.ts --bundle --platform=node --format=esm --target=node20 --outdir=dist --packages=external",
+    "build:api": "npm run build",
     "start": "node dist/server.js",
+    "start:api": "npm run start",
+    "prestart": "npm run build:api",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
