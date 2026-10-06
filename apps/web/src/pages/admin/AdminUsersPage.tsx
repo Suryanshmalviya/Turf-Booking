@@ -9,7 +9,13 @@ import { Select } from '../../components/ui/Select';
 import { useAdminUsers, useUpdateUser } from '../../hooks/useAdmin';
 import { useToast } from '../../hooks/useToast';
 import type { AdminUser, AdminUserRole, AdminUserStatus } from '../../types/admin';
-import { ADMIN_PAGE_SIZE, humanize,USER_ROLES, USER_STATUS_TONE, USER_STATUSES } from '../../types/admin';
+import {
+  ADMIN_PAGE_SIZE,
+  humanize,
+  USER_ROLES,
+  USER_STATUS_TONE,
+  USER_STATUSES,
+} from '../../types/admin';
 import type { TableColumn } from '../../types/ui';
 import { toErrorMessage } from '../../utils/error';
 import { formatDateTime, formatRelative } from '../../utils/format';
@@ -91,7 +97,9 @@ export function AdminUsersPage() {
     {
       key: 'joined',
       header: 'Joined',
-      render: user => <span className="text-xs text-gray-500">{formatDateTime(user.createdAt ?? '')}</span>,
+      render: user => (
+        <span className="text-xs text-gray-500">{formatDateTime(user.createdAt ?? '')}</span>
+      ),
     },
     {
       key: 'lastLogin',
@@ -195,8 +203,8 @@ export function AdminUsersPage() {
           pending ? (
             <>
               {pending.user.displayName} ({pending.user.email}) will become{' '}
-              <strong>{humanize(pending.next)}</strong>. Suspending or deleting an account also revokes its
-              active sessions.
+              <strong>{humanize(pending.next)}</strong>. Suspending or deleting an account also
+              revokes its active sessions.
             </>
           ) : undefined
         }

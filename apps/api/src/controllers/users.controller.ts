@@ -19,7 +19,10 @@ export const profile = asyncHandler(async (request: Request, response: Response)
 
 export const updateMe = asyncHandler(async (request: Request, response: Response) => {
   sendSuccess(response, {
-    user: await updateProfile(request.user!.sub, request.body as Parameters<typeof updateProfile>[1]),
+    user: await updateProfile(
+      request.user!.sub,
+      request.body as Parameters<typeof updateProfile>[1]
+    ),
   });
 });
 
@@ -42,7 +45,10 @@ export const revokeSession = asyncHandler(async (request: Request, response: Res
 });
 
 export const directory = asyncHandler(async (request: Request, response: Response) => {
-  sendSuccess(response, await listUsers(request.query as unknown as Parameters<typeof listUsers>[0]));
+  sendSuccess(
+    response,
+    await listUsers(request.query as unknown as Parameters<typeof listUsers>[0])
+  );
 });
 
 export const byId = asyncHandler(async (request: Request, response: Response) => {

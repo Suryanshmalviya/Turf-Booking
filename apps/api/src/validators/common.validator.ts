@@ -8,9 +8,7 @@ export const objectIdSchema = z
   .string()
   .regex(/^[a-f\d]{24}$/i, 'Must be a valid MongoDB ObjectId');
 
-export const currencySchema = z
-  .string()
-  .regex(/^[A-Z]{3}$/, 'Must be an ISO 4217 currency code');
+export const currencySchema = z.string().regex(/^[A-Z]{3}$/, 'Must be an ISO 4217 currency code');
 
 export const timezoneSchema = z.string().refine(isIanaTimezone, 'Must be a valid IANA timezone');
 

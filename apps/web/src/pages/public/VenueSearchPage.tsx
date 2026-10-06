@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { Container,PageHeader, PageShell } from '../../components/common/Container';
+import { Container, PageHeader, PageShell } from '../../components/common/Container';
 import { CourtCard } from '../../components/court/CourtCard';
 import { VenueSearchForm } from '../../components/forms/VenueSearchForm';
 import { EmptyState } from '../../components/ui/EmptyState';

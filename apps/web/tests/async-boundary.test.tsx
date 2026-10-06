@@ -56,9 +56,7 @@ describe('AsyncBoundary', () => {
     const refetch = vi.fn();
 
     render(
-      <AsyncBoundary
-        query={{ isPending: false, isError: true, error: new Error('Boom'), refetch }}
-      >
+      <AsyncBoundary query={{ isPending: false, isError: true, error: new Error('Boom'), refetch }}>
         {content()}
       </AsyncBoundary>
     );
@@ -80,9 +78,7 @@ describe('AsyncBoundary', () => {
 
   it('prefers the error over the pending state so a failed retry is visible', () => {
     render(
-      <AsyncBoundary
-        query={{ isPending: true, isError: true, error: new Error('Still failing') }}
-      >
+      <AsyncBoundary query={{ isPending: true, isError: true, error: new Error('Still failing') }}>
         {content()}
       </AsyncBoundary>
     );
@@ -125,7 +121,11 @@ describe('AsyncBoundary', () => {
   });
 
   it('stays quiet about background refetches when the caller does not ask', () => {
-    render(<AsyncBoundary query={{ ...resolved(['court-1']), isFetching: true }}>{content()}</AsyncBoundary>);
+    render(
+      <AsyncBoundary query={{ ...resolved(['court-1']), isFetching: true }}>
+        {content()}
+      </AsyncBoundary>
+    );
 
     expect(screen.getByText('Court list')).toBeInTheDocument();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();

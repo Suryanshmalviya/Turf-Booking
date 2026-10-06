@@ -29,6 +29,12 @@ export {
   requireSelfOrAdmin,
   requireUser,
 } from './role.middleware';
-export { applySecurity, bodyParsers, compressionMiddleware, corsOptions, securityHeaders } from './security';
+export {
+  applySecurity,
+  bodyParsers,
+  compressionMiddleware,
+  corsOptions,
+  securityHeaders,
+} from './security';
 export type { RequestSchemas } from './validate';
 export { validate } from './validate';

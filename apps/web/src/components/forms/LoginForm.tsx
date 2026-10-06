@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../../hooks/useAuth';
 import type { AuthUser } from '../../types/auth';
 import { toErrorMessage } from '../../utils/error';
-import { type LoginFormValues,loginSchema } from '../../utils/validation';
+import { type LoginFormValues, loginSchema } from '../../utils/validation';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { FormActions, FormError, FormField } from './FormField';

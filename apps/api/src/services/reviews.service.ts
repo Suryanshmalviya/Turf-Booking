@@ -1,4 +1,4 @@
-import { type FilterQuery,Types } from 'mongoose';
+import { type FilterQuery, Types } from 'mongoose';
 
 import { logger } from '../config';
 import { AuditLogModel } from '../models/admin.model';
@@ -121,7 +121,8 @@ export async function listReviews(query: ReviewListQuery) {
       page: query.page,
       limit: query.limit,
       sort: parseSort(query.sort, REVIEW_SORT_WHITELIST, REVIEW_SORT_FALLBACK),
-      select: 'rating title comment surfaceRating serviceRating isVerifiedBooking reply createdAt updatedAt userId venueId',
+      select:
+        'rating title comment surfaceRating serviceRating isVerifiedBooking reply createdAt updatedAt userId venueId',
     }
   );
 
@@ -141,7 +142,8 @@ export async function listMyReviews(query: {
       page: query.page,
       limit: query.limit,
       sort: parseSort(query.sort, REVIEW_SORT_WHITELIST, REVIEW_SORT_FALLBACK),
-      select: 'rating title comment surfaceRating serviceRating status isVerifiedBooking reply createdAt updatedAt venueId bookingId',
+      select:
+        'rating title comment surfaceRating serviceRating status isVerifiedBooking reply createdAt updatedAt venueId bookingId',
     }
   );
 
@@ -249,7 +251,12 @@ export async function moderateReview(input: {
 /** Aggregate rating used on the public court detail payload. */
 export async function getVenueRatingSummary(venueId: string): Promise<RatingSummary> {
   if (!Types.ObjectId.isValid(venueId)) {
-    return { venueId, average: 0, count: 0, distribution: { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 } };
+    return {
+      venueId,
+      average: 0,
+      count: 0,
+      distribution: { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 },
+    };
   }
 
   const rows = await ReviewModel.aggregate<RatingAggregateRow>([

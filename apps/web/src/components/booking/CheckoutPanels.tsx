@@ -139,7 +139,8 @@ export function HoldPanel({
 
           {booking && (
             <p className="mt-2 text-xs text-gray-500">
-              Held as {bookingStatusLabel(booking.status)} · payment {paymentStatusLabel(booking.paymentStatus)}
+              Held as {bookingStatusLabel(booking.status)} · payment{' '}
+              {paymentStatusLabel(booking.paymentStatus)}
             </p>
           )}
 
@@ -154,7 +155,10 @@ export function HoldPanel({
       {!isPending && !error && !hasDeadline && (
         <p className="mt-4 text-sm text-gray-500">
           No active hold yet. Choose a slot from the{' '}
-          <Link to={backToAvailabilityHref} className="font-semibold text-primary-700 hover:underline">
+          <Link
+            to={backToAvailabilityHref}
+            className="font-semibold text-primary-700 hover:underline"
+          >
             availability grid
           </Link>
           .

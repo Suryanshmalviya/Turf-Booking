@@ -124,7 +124,10 @@ describe('admin actions', () => {
     vi.spyOn(UserModel, 'findById').mockResolvedValueOnce(null);
 
     await expect(
-      updateUserRoleOrStatus({ userId: '507f1f77bcf86cd799439011', actorId: '507f1f77bcf86cd799439012' })
+      updateUserRoleOrStatus({
+        userId: '507f1f77bcf86cd799439011',
+        actorId: '507f1f77bcf86cd799439012',
+      })
     ).rejects.toThrow('User not found');
   });
 });
@@ -146,7 +149,11 @@ describe('admin validators', () => {
     const params = { params: { userId: '507f1f77bcf86cd799439011' } };
 
     expect(adminUpdateUserSchema.safeParse({ ...params, body: {} }).success).toBe(false);
-    expect(adminUpdateUserSchema.safeParse({ ...params, body: { role: 'admin' } }).success).toBe(true);
-    expect(adminUpdateUserSchema.safeParse({ ...params, body: { role: 'superuser' } }).success).toBe(false);
+    expect(adminUpdateUserSchema.safeParse({ ...params, body: { role: 'admin' } }).success).toBe(
+      true
+    );
+    expect(
+      adminUpdateUserSchema.safeParse({ ...params, body: { role: 'superuser' } }).success
+    ).toBe(false);
   });
 });

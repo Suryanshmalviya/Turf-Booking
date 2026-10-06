@@ -1,12 +1,20 @@
 import { Types } from 'mongoose';
 import { describe, expect, it, vi } from 'vitest';
 
-import { requireBookingAccess, requireSelf, requireVenueAccess } from '../src/middleware/authorization';
+import {
+  requireBookingAccess,
+  requireSelf,
+  requireVenueAccess,
+} from '../src/middleware/authorization';
 import { BookingModel } from '../src/models/bookings.model';
 import { VenueModel } from '../src/models/courts.model';
 import { VenueStaffAssignmentModel } from '../src/models/users.model';
 import { assertBookingAccess } from '../src/services/bookings.service';
-import { assertVenueAccess, hasStaffAssignment, isVenueOwner } from '../src/services/courts.service';
+import {
+  assertVenueAccess,
+  hasStaffAssignment,
+  isVenueOwner,
+} from '../src/services/courts.service';
 import type { JwtPayload } from '../src/types/auth';
 import { ApiError } from '../src/utils/api-error';
 
@@ -23,7 +31,7 @@ const actor = (role: JwtPayload['role'], sub = OWNER_ID): JwtPayload => ({
 
 /** Runs an async middleware and resolves with the error handed to `next`, if any. */
 const runMiddleware = (handler: ReturnType<typeof requireVenueAccess>, request: unknown) =>
-  new Promise<{ error: unknown; nextCalls: number }>((resolve) => {
+  new Promise<{ error: unknown; nextCalls: number }>(resolve => {
     const next = vi.fn((error?: unknown) => resolve({ error, nextCalls: next.mock.calls.length }));
     handler(request as never, {} as never, next as never);
   });
@@ -52,9 +60,13 @@ describe('venue authorization', () => {
   });
 
   it('grants staff only while an active assignment exists', async () => {
-    const exists = vi.spyOn(VenueStaffAssignmentModel, 'exists').mockResolvedValue({ _id: 'a' } as never);
+    const exists = vi
+      .spyOn(VenueStaffAssignmentModel, 'exists')
+      .mockResolvedValue({ _id: 'a' } as never);
 
-    await expect(assertVenueAccess(VENUE_ID, actor('venue_staff', STAFF_ID))).resolves.toBeUndefined();
+    await expect(
+      assertVenueAccess(VENUE_ID, actor('venue_staff', STAFF_ID))
+    ).resolves.toBeUndefined();
     expect(exists).toHaveBeenCalledWith({ venueId: VENUE_ID, userId: STAFF_ID, active: true });
     await expect(hasStaffAssignment(VENUE_ID, STAFF_ID)).resolves.toBe(true);
 
@@ -129,7 +141,9 @@ describe('authorization middleware adapters', () => {
 
   it('surfaces service rejections to the error pipeline', async () => {
     vi.spyOn(BookingModel, 'findById').mockReturnValueOnce({
-      select: vi.fn().mockResolvedValue({ userId: { toString: () => 'someone-else' }, venueId: VENUE_ID }),
+      select: vi
+        .fn()
+        .mockResolvedValue({ userId: { toString: () => 'someone-else' }, venueId: VENUE_ID }),
     } as never);
 
     const { error } = await runMiddleware(requireBookingAccess(), {
@@ -150,7 +164,10 @@ describe('authorization middleware adapters', () => {
   });
 
   it('rejects a request without a resolvable id', async () => {
-    const { error } = await runMiddleware(requireVenueAccess(), { params: {}, user: actor('admin') });
+    const { error } = await runMiddleware(requireVenueAccess(), {
+      params: {},
+      user: actor('admin'),
+    });
 
     expect((error as ApiError).statusCode).toBe(400);
   });
@@ -159,10 +176,18 @@ describe('authorization middleware adapters', () => {
     const denied = vi.fn();
     const allowed = vi.fn();
 
-    requireSelf()({ params: { userId: 'other' }, user: actor('customer', 'me') } as never, {} as never, denied as never);
+    requireSelf()(
+      { params: { userId: 'other' }, user: actor('customer', 'me') } as never,
+      {} as never,
+      denied as never
+    );
     expect((denied.mock.calls[0][0] as ApiError).statusCode).toBe(403);
 
-    requireSelf()({ params: { userId: 'me' }, user: actor('customer', 'me') } as never, {} as never, allowed as never);
+    requireSelf()(
+      { params: { userId: 'me' }, user: actor('customer', 'me') } as never,
+      {} as never,
+      allowed as never
+    );
     expect(allowed).toHaveBeenCalledWith();
   });
 });

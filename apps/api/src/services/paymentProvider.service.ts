@@ -109,7 +109,13 @@ export class DevelopmentMockPaymentProvider implements PaymentProviderAdapter {
       throw ApiError.badRequest('Invalid payment webhook payload');
     }
 
-    if (!event.eventId || !event.providerPaymentId || !event.bookingId || !event.amountMinor || !event.currency) {
+    if (
+      !event.eventId ||
+      !event.providerPaymentId ||
+      !event.bookingId ||
+      !event.amountMinor ||
+      !event.currency
+    ) {
       throw ApiError.badRequest('Incomplete payment webhook payload');
     }
 

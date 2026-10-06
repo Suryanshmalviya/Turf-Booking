@@ -111,9 +111,12 @@ export const adminApi = {
   // -------------------------------------------------------------- users
 
   users(query: AdminListQuery = {}, signal?: AbortSignal) {
-    return request<AdminPage<AdminUser>>(`/admin/users${buildQuery(paged(query.page ?? 1, query))}`, {
-      signal,
-    });
+    return request<AdminPage<AdminUser>>(
+      `/admin/users${buildQuery(paged(query.page ?? 1, query))}`,
+      {
+        signal,
+      }
+    );
   },
 
   updateUser(userId: string, body: AdminUserUpdate) {
@@ -123,17 +126,19 @@ export const adminApi = {
   // -------------------------------------------------------------- courts
 
   venues(query: AdminListQuery = {}, signal?: AbortSignal) {
-    return request<AdminPage<AdminVenue>>(`/admin/venues${buildQuery(paged(query.page ?? 1, query))}`, {
-      signal,
-    });
+    return request<AdminPage<AdminVenue>>(
+      `/admin/venues${buildQuery(paged(query.page ?? 1, query))}`,
+      {
+        signal,
+      }
+    );
   },
 
   /** Venues awaiting a moderation decision. */
   venueQueue(page = 1, signal?: AbortSignal) {
-    return request<AdminPage<AdminVenue>>(
-      `/admin/venues/queue${buildQuery(paged(page))}`,
-      { signal }
-    );
+    return request<AdminPage<AdminVenue>>(`/admin/venues/queue${buildQuery(paged(page))}`, {
+      signal,
+    });
   },
 
   /**

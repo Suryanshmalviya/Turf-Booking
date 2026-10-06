@@ -118,8 +118,7 @@ function ProbeHarness({ children }: { children: ReactNode }) {
 
 const staleBookings = () => testClient?.getQueryData(['bookings', 'list']);
 
-const expectEvicted = async () =>
-  waitFor(() => expect(staleBookings()).toBeUndefined());
+const expectEvicted = async () => waitFor(() => expect(staleBookings()).toBeUndefined());
 
 const expectState = async (state: string) =>
   waitFor(() => expect(screen.getByTestId('state')).toHaveTextContent(state));
@@ -267,5 +266,3 @@ describe('unrecoverable session', () => {
     await expectEvicted();
   });
 });
-
-

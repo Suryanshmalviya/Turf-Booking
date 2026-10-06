@@ -36,7 +36,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   if (!label && !hint && !error) return control;
 
   return (
-    <Field id={fieldId} label={label} hint={hint} error={error} required={required} hideLabel={hideLabel}>
+    <Field
+      id={fieldId}
+      label={label}
+      hint={hint}
+      error={error}
+      required={required}
+      hideLabel={hideLabel}
+    >
       {control}
     </Field>
   );

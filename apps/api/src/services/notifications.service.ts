@@ -2,11 +2,7 @@ import type { FilterQuery } from 'mongoose';
 
 import { config, logger } from '../config';
 import { type NotificationDocument, NotificationModel } from '../models/notifications.model';
-import type {
-  NotificationChannel,
-  NotificationStatus,
-  NotificationType,
-} from '../types/enums';
+import type { NotificationChannel, NotificationStatus, NotificationType } from '../types/enums';
 import type { SortSpec } from '../types/pagination';
 import { ApiError } from '../utils/api-error';
 import { paginate, paginateWithMeta } from '../utils/paginate';
@@ -77,7 +73,10 @@ export async function enqueueNotification(input: EnqueueInput): Promise<void> {
     });
   } catch (error) {
     if ((error as { code?: number }).code === 11000) return;
-    logger.error({ err: error, deduplicationKey: input.deduplicationKey }, 'Failed to queue notification');
+    logger.error(
+      { err: error, deduplicationKey: input.deduplicationKey },
+      'Failed to queue notification'
+    );
   }
 }
 
@@ -104,7 +103,8 @@ export async function listNotifications(query: NotificationListQuery) {
       page: query.page,
       limit: query.limit,
       sort: parseSort(query.sort, NOTIFICATION_SORT_WHITELIST, NOTIFICATION_SORT_FALLBACK),
-      select: 'type channel status subject body sentAt readAt failureReason attemptCount bookingId createdAt',
+      select:
+        'type channel status subject body sentAt readAt failureReason attemptCount bookingId createdAt',
     }
   );
 

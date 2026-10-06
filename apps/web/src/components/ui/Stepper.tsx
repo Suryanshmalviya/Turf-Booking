@@ -25,7 +25,9 @@ export interface StepperProps {
 export function Stepper({ steps, currentIndex, className, ariaLabel }: StepperProps) {
   const resolved = steps.map((step, index) => ({
     ...step,
-    state: step.state ?? (index < currentIndex ? 'complete' : index === currentIndex ? 'current' : 'upcoming'),
+    state:
+      step.state ??
+      (index < currentIndex ? 'complete' : index === currentIndex ? 'current' : 'upcoming'),
   }));
   const percent = Math.round(((currentIndex + 1) / resolved.length) * 100);
 
@@ -39,7 +41,10 @@ export function Stepper({ steps, currentIndex, className, ariaLabel }: StepperPr
         aria-valuenow={currentIndex + 1}
         aria-valuetext={`Step ${currentIndex + 1} of ${resolved.length}: ${resolved[currentIndex]?.label ?? ''}`}
       >
-        <div className="h-full rounded-full bg-primary-600 transition-all" style={{ width: `${percent}%` }} />
+        <div
+          className="h-full rounded-full bg-primary-600 transition-all"
+          style={{ width: `${percent}%` }}
+        />
       </div>
 
       <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
@@ -81,7 +86,12 @@ export function Stepper({ steps, currentIndex, className, ariaLabel }: StepperPr
 
 function CheckIcon() {
   return (
-    <svg className="h-4 w-4 text-primary-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+    <svg
+      className="h-4 w-4 text-primary-600"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
       <path
         fillRule="evenodd"
         d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4l3.8 3.8 6.8-6.8a1 1 0 0 1 1.4 0z"

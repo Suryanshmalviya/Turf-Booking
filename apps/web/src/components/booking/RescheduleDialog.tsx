@@ -75,8 +75,8 @@ export function RescheduleDialog({ open, booking, onClose, venueName }: Reschedu
       }
     >
       <Notice variant="info" title="How rescheduling works">
-        Pick a new slot first. Your current booking stays active until you confirm the new time, so you
-        never lose the original slot while deciding.
+        Pick a new slot first. Your current booking stays active until you confirm the new time, so
+        you never lose the original slot while deciding.
       </Notice>
       {error && (
         <p role="alert" className="mt-3 text-sm text-red-700">

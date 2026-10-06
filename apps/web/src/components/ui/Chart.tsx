@@ -89,7 +89,11 @@ function ChartTooltip({
       {label !== undefined && <p className="mb-1 font-semibold text-slate-950">{label}</p>}
       {payload.map(entry => (
         <p key={entry.dataKey} className="flex items-center gap-2 text-gray-700">
-          <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: entry.color }} />
+          <span
+            aria-hidden="true"
+            className="h-2 w-2 rounded-full"
+            style={{ background: entry.color }}
+          />
           {entry.name}: {entry.value !== undefined ? formatValue(entry.value, valueFormatter) : '—'}
         </p>
       ))}
@@ -164,7 +168,10 @@ export function BarChartCard({
               <YAxis {...valueAxis} />
             </>
           )}
-          <Tooltip content={<ChartTooltip valueFormatter={valueFormatter} />} cursor={{ fill: '#f3f4f6' }} />
+          <Tooltip
+            content={<ChartTooltip valueFormatter={valueFormatter} />}
+            cursor={{ fill: '#f3f4f6' }}
+          />
           <Legend content={() => null} />
           {series.map((entry, index) => (
             <Bar
@@ -201,7 +208,12 @@ export function LineChartCard({
         <LineChart data={data} margin={{ top: 8, right: 16, bottom: 8, left: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis dataKey={xKey} tick={{ fontSize: 12 }} tickLine={false} />
-          <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={valueFormatter} />
+          <YAxis
+            tick={{ fontSize: 12 }}
+            tickLine={false}
+            axisLine={false}
+            tickFormatter={valueFormatter}
+          />
           <Tooltip content={<ChartTooltip valueFormatter={valueFormatter} />} />
           <Legend content={() => null} />
           {series.map((entry, index) => (
@@ -259,7 +271,10 @@ export function PieChartCard({
       </ResponsiveContainer>
       <ul className="mt-4 grid gap-x-4 gap-y-1 sm:grid-cols-2">
         {data.map((entry, index) => (
-          <li key={String(entry[nameKey])} className="flex items-center justify-between gap-3 text-xs">
+          <li
+            key={String(entry[nameKey])}
+            className="flex items-center justify-between gap-3 text-xs"
+          >
             <span className="flex items-center gap-1.5 text-gray-600">
               <span
                 aria-hidden="true"
@@ -290,12 +305,21 @@ export interface ChartCardProps {
 export function ChartCard({ title, description, actions, children, className }: ChartCardProps) {
   return (
     <Card className={className}>
-      <CardHeader title={title} {...(description ? { description } : {})} {...(actions ? { actions } : {})} />
+      <CardHeader
+        title={title}
+        {...(description ? { description } : {})}
+        {...(actions ? { actions } : {})}
+      />
       <div className="mt-5">{children}</div>
     </Card>
   );
 }
 
 function ChartEmpty() {
-  return <EmptyState title="No data in this range" description="Widen the date range or clear the filters." />;
+  return (
+    <EmptyState
+      title="No data in this range"
+      description="Widen the date range or clear the filters."
+    />
+  );
 }

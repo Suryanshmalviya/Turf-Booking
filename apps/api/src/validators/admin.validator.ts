@@ -53,21 +53,9 @@ export const adminCreateVenueSchema = z.object({
     line1: z.string().trim().max(200).optional().default('Main Court Avenue'),
     region: z.string().trim().max(100).optional().default('Metro'),
     postalCode: z.string().trim().max(20).optional().default('110001'),
-    country: z
-      .string()
-      .trim()
-      .length(2)
-      .toUpperCase()
-      .optional()
-      .default('IN'),
+    country: z.string().trim().length(2).toUpperCase().optional().default('IN'),
     timezone: z.string().trim().optional().default('Asia/Kolkata'),
-    currency: z
-      .string()
-      .trim()
-      .length(3)
-      .toUpperCase()
-      .optional()
-      .default('INR'),
+    currency: z.string().trim().length(3).toUpperCase().optional().default('INR'),
     courtName: z.string().trim().min(1).max(100).optional().default('Court 1'),
     courtSurface: z.string().trim().max(80).optional().default('Pro Cushion Acrylic'),
     indoor: z.boolean().optional().default(false),

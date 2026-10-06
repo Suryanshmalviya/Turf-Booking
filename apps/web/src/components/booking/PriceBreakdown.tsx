@@ -35,7 +35,8 @@ export function PriceBreakdown({
   className,
 }: PriceBreakdownProps) {
   const derivedRate =
-    hourlyRateMinor ?? (durationMinutes > 0 ? Math.round((amountMinor / durationMinutes) * 60) : undefined);
+    hourlyRateMinor ??
+    (durationMinutes > 0 ? Math.round((amountMinor / durationMinutes) * 60) : undefined);
   const extrasTotal = extraLines.reduce((sum, line) => sum + line.amountMinor, 0);
   const subtotal = amountMinor - extrasTotal;
 

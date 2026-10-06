@@ -23,7 +23,19 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 
 /** Native select built from a fixed option list, used for every filter form. */
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
-  { label, hint, error, hideLabel, invalid, placeholder, options, className, id, required, ...rest },
+  {
+    label,
+    hint,
+    error,
+    hideLabel,
+    invalid,
+    placeholder,
+    options,
+    className,
+    id,
+    required,
+    ...rest
+  },
   ref
 ) {
   const fieldId = useFieldId(id);
@@ -51,7 +63,14 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   if (!label && !hint && !error) return control;
 
   return (
-    <Field id={fieldId} label={label} hint={hint} error={error} required={required} hideLabel={hideLabel}>
+    <Field
+      id={fieldId}
+      label={label}
+      hint={hint}
+      error={error}
+      required={required}
+      hideLabel={hideLabel}
+    >
       {control}
     </Field>
   );

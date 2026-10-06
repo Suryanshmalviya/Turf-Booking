@@ -104,7 +104,9 @@ export function paymentMatchesSnapshot(
   attempt: { amountMinor: number; currency: string },
   event: { amountMinor: number; currency: string }
 ): boolean {
-  return attempt.amountMinor === event.amountMinor && attempt.currency === event.currency.toUpperCase();
+  return (
+    attempt.amountMinor === event.amountMinor && attempt.currency === event.currency.toUpperCase()
+  );
 }
 
 export async function assertPaidAttempt(
@@ -273,8 +275,10 @@ export async function reconcilePendingPayments(): Promise<{ markedUncertain: num
   );
 
   if (result.modifiedCount > 0) {
-    const bookingIds = await PaymentAttemptModel.find({ status: 'uncertain', updatedAt: { $gte: cutoff } })
-      .distinct('bookingId');
+    const bookingIds = await PaymentAttemptModel.find({
+      status: 'uncertain',
+      updatedAt: { $gte: cutoff },
+    }).distinct('bookingId');
     if (bookingIds.length > 0) {
       await BookingModel.updateMany(
         { paymentStatus: 'pending', _id: { $in: bookingIds } },

@@ -49,10 +49,9 @@ export const venueSearchSchema = z.object({
   city: z.string().trim().max(100, 'City name is too long'),
   date: z.string(),
   time: z.string(),
-  maxPrice: z.string().refine(
-    value => value === '' || /^\d+(\.\d{1,2})?$/.test(value),
-    'Enter a valid amount'
-  ),
+  maxPrice: z
+    .string()
+    .refine(value => value === '' || /^\d+(\.\d{1,2})?$/.test(value), 'Enter a valid amount'),
   feature: z.enum(['', 'indoor', 'outdoor']),
 });
 

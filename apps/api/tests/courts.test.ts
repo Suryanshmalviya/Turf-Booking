@@ -13,7 +13,12 @@ import {
 import { VENUE_SORT_FALLBACK, VENUE_SORT_WHITELIST } from '../src/services/courts.service';
 import { ApiError } from '../src/utils/api-error';
 import { parseSort } from '../src/utils/sort';
-import { isIanaTimezone, localDateParts, nextDateKey, zonedDateTimeToUtc } from '../src/utils/timezone';
+import {
+  isIanaTimezone,
+  localDateParts,
+  nextDateKey,
+  zonedDateTimeToUtc,
+} from '../src/utils/timezone';
 import {
   createAvailabilityExceptionSchema,
   createPriceRuleSchema,
@@ -50,11 +55,7 @@ describe('interval maths', () => {
   });
 
   it('enumerates every slot boundary an interval touches', () => {
-    const slots = slotKeys(
-      new Date('2026-01-01T10:00:00Z'),
-      new Date('2026-01-01T11:00:00Z'),
-      30
-    );
+    const slots = slotKeys(new Date('2026-01-01T10:00:00Z'), new Date('2026-01-01T11:00:00Z'), 30);
 
     expect(slots).toHaveLength(2);
     expect(slots[0].toISOString()).toBe('2026-01-01T10:00:00.000Z');
@@ -74,7 +75,10 @@ describe('timezone helpers', () => {
 
   it('round-trips a local wall-clock time and rolls the date key forward', () => {
     const utc = zonedDateTimeToUtc('2026-04-01', 9 * 60, 'Asia/Kolkata');
-    expect(localDateParts(utc, 'Asia/Kolkata')).toMatchObject({ dateKey: '2026-04-01', minute: 540 });
+    expect(localDateParts(utc, 'Asia/Kolkata')).toMatchObject({
+      dateKey: '2026-04-01',
+      minute: 540,
+    });
     expect(nextDateKey('2026-12-31')).toBe('2027-01-01');
   });
 });
@@ -120,10 +124,23 @@ describe('pricing', () => {
     const hourly = [{ ...rules[0], pricingUnit: 'hour' as const, amountMinor: 50000, priority: 1 }];
 
     expect(
-      priceForInterval(hourly, new Date('2026-01-04T09:00:00Z'), new Date('2026-01-04T10:30:00Z'), 'UTC', 'INR')
-        .priceMinor
+      priceForInterval(
+        hourly,
+        new Date('2026-01-04T09:00:00Z'),
+        new Date('2026-01-04T10:30:00Z'),
+        'UTC',
+        'INR'
+      ).priceMinor
     ).toBe(100000);
-    expect(priceForInterval([], new Date('2026-01-04T09:00:00Z'), new Date('2026-01-04T10:00:00Z'), 'UTC', 'INR')).toEqual({
+    expect(
+      priceForInterval(
+        [],
+        new Date('2026-01-04T09:00:00Z'),
+        new Date('2026-01-04T10:00:00Z'),
+        'UTC',
+        'INR'
+      )
+    ).toEqual({
       priceMinor: 0,
       currency: 'INR',
     });
@@ -222,13 +239,20 @@ describe('court validators', () => {
     expect(
       createPriceRuleSchema.safeParse({
         params: { venueId: '507f1f77bcf86cd799439011' },
-        body: { amountMinor: 1000, currency: 'INR', startDate: '2026-05-02', endDate: '2026-05-01' },
+        body: {
+          amountMinor: 1000,
+          currency: 'INR',
+          startDate: '2026-05-02',
+          endDate: '2026-05-01',
+        },
       }).success
     ).toBe(false);
   });
 
   it('coerces pagination and applies sort defaults', () => {
-    const parsed = listCourtsSchema.parse({ query: { page: '3', limit: '10', sort: '-createdAt' } });
+    const parsed = listCourtsSchema.parse({
+      query: { page: '3', limit: '10', sort: '-createdAt' },
+    });
 
     expect(parsed.query).toMatchObject({ page: 3, limit: 10, sort: '-createdAt' });
   });
@@ -245,8 +269,8 @@ describe('court validators', () => {
     expect(listCourtsSchema.safeParse({ query: { date: '2026-4-1' } }).success).toBe(false);
     expect(listCourtsSchema.safeParse({ query: { time: '25:00' } }).success).toBe(false);
     expect(listCourtsSchema.safeParse({ query: { time: '09:75' } }).success).toBe(false);
-    expect(listCourtsSchema.parse({ query: { date: '2026-04-01', time: '18:30' } }).query).toMatchObject(
-      { date: '2026-04-01', time: '18:30' }
-    );
+    expect(
+      listCourtsSchema.parse({ query: { date: '2026-04-01', time: '18:30' } }).query
+    ).toMatchObject({ date: '2026-04-01', time: '18:30' });
   });
 });

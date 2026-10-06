@@ -15,7 +15,9 @@ export function requireIdempotencyKey(request: Request): string {
 
 /** Returns the correlation id assigned by the request-id middleware. */
 export function requestIdOf(request: Request, response?: Response, _next?: NextFunction): string {
-  return request.requestId ?? (response?.getHeader('X-Request-ID') as string | undefined) ?? 'unknown';
+  return (
+    request.requestId ?? (response?.getHeader('X-Request-ID') as string | undefined) ?? 'unknown'
+  );
 }
 
 export function clientIp(request: Request): string | undefined {

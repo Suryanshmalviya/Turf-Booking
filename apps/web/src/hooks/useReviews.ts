@@ -105,8 +105,15 @@ export function useModerateReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ reviewId, status, reason }: { reviewId: string; status: ReviewStatus; reason?: string }) =>
-      reviewApi.moderate(reviewId, status, reason),
+    mutationFn: ({
+      reviewId,
+      status,
+      reason,
+    }: {
+      reviewId: string;
+      status: ReviewStatus;
+      reason?: string;
+    }) => reviewApi.moderate(reviewId, status, reason),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.reviews.all() });
     },

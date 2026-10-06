@@ -1,6 +1,12 @@
 ﻿import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { adminApi, type AdminBookingQuery, type AdminListQuery,HISTORY_FROM, HISTORY_TO } from '../services/admin.api';
+import {
+  adminApi,
+  type AdminBookingQuery,
+  type AdminListQuery,
+  HISTORY_FROM,
+  HISTORY_TO,
+} from '../services/admin.api';
 import { queryKeys } from '../services/queryKeys';
 import type {
   AdminBooking,
@@ -58,7 +64,10 @@ export function useRecentBookings(enabled = true) {
  * Used for the "today" and "upcoming" figures: the report's window is closed on
  * both ends, so an open-ended future range cannot be expressed through it.
  */
-export function useBookingCount(filter: { status?: string; from?: string; to?: string }, enabled = true) {
+export function useBookingCount(
+  filter: { status?: string; from?: string; to?: string },
+  enabled = true
+) {
   return useQuery({
     queryKey: queryKeys.admin.bookingCount(filter),
     queryFn: ({ signal }) => adminApi.bookingCount(filter, signal),
@@ -130,8 +139,15 @@ export function useReviewVenue() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ venueId, action, reason }: { venueId: string; action: VenueAction; reason: string }) =>
-      adminApi.reviewVenue(venueId, action, reason),
+    mutationFn: ({
+      venueId,
+      action,
+      reason,
+    }: {
+      venueId: string;
+      action: VenueAction;
+      reason: string;
+    }) => adminApi.reviewVenue(venueId, action, reason),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.admin.all() });
       void queryClient.invalidateQueries({ queryKey: queryKeys.venues.all() });

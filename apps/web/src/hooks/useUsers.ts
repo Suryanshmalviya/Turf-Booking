@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { authApi } from '../services/auth.api';
 import { queryKeys } from '../services/queryKeys';
-import { type UpdateProfileInput,userApi } from '../services/user.api';
+import { type UpdateProfileInput, userApi } from '../services/user.api';
 import { useAuth } from './useAuth';
 
 /** Profile, credentials and active sessions for the signed-in account. */

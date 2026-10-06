@@ -113,7 +113,7 @@ services:
     security_opt:
       - no-new-privileges:true
 
-# ─── Optional MongoDB admin UI (profile: tools) ─────────────────────────────
+  # ─── Optional MongoDB admin UI (profile: tools) ─────────────────────────────
   # Deliberately NOT in the default profile so `docker compose up` never starts
   # a database browser with a hard-coded password. Enable explicitly:
   #   docker compose --profile tools up -d

@@ -11,7 +11,9 @@ export const ROUTES = {
   venueDetail: (venueId: string) => `/venues/${venueId}`,
   /** Availability grid for one venue, optionally pre-selecting a court. */
   venueBooking: (venueId: string, pitchId?: string) =>
-    pitchId ? `/venues/${venueId}/book?pitch=${encodeURIComponent(pitchId)}` : `/venues/${venueId}/book`,
+    pitchId
+      ? `/venues/${venueId}/book?pitch=${encodeURIComponent(pitchId)}`
+      : `/venues/${venueId}/book`,
 
   checkout: '/checkout',
   /** Receipt shown after the server confirms a booking. */

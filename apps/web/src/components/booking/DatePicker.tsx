@@ -45,10 +45,7 @@ export function DatePicker({
     return Array.from({ length: dayCount }, (_, index) => addDays(start, index));
   }, [dayCount]);
 
-  const activeIndex = Math.max(
-    0,
-    options.indexOf(value)
-  );
+  const activeIndex = Math.max(0, options.indexOf(value));
 
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -98,7 +95,11 @@ export function DatePicker({
         </p>
         {paged && (
           <div className="flex gap-1">
-            <IconButton label="Previous week" disabled={activeIndex === 0} onClick={() => move(-dayCount)}>
+            <IconButton
+              label="Previous week"
+              disabled={activeIndex === 0}
+              onClick={() => move(-dayCount)}
+            >
               <ChevronIcon direction="left" />
             </IconButton>
             <IconButton
@@ -139,7 +140,12 @@ export function DatePicker({
                   : 'border-gray-200 bg-white text-gray-700 hover:border-primary-300'
               )}
             >
-              <span className={cn('text-[11px] uppercase tracking-wide', selected ? 'text-white/80' : 'text-gray-500')}>
+              <span
+                className={cn(
+                  'text-[11px] uppercase tracking-wide',
+                  selected ? 'text-white/80' : 'text-gray-500'
+                )}
+              >
                 {formatDayShort(dateKey)}
               </span>
               <span className="text-lg font-bold leading-tight">{dayOfMonth(dateKey)}</span>

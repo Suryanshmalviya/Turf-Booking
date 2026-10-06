@@ -15,10 +15,7 @@ export function containsRegex(value: string, flags = 'i'): RegExp {
   return new RegExp(escapeRegex(value), flags);
 }
 
-export function toObjectId(
-  value: string,
-  field = 'id'
-): Types.ObjectId {
+export function toObjectId(value: string, field = 'id'): Types.ObjectId {
   if (!Types.ObjectId.isValid(value)) throw ApiError.badRequest(`${field} is not a valid id`);
   return new Types.ObjectId(value);
 }

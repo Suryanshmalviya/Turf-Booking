@@ -24,7 +24,12 @@ const SAFE_METHODS = new Set(['GET', 'HEAD']);
  * Endpoints that must never trigger the refresh cycle: they either establish the
  * session, end it, or are the refresh itself.
  */
-const NO_REFRESH_PATHS = new Set(['/auth/login', '/auth/register', '/auth/logout', '/auth/refresh']);
+const NO_REFRESH_PATHS = new Set([
+  '/auth/login',
+  '/auth/register',
+  '/auth/logout',
+  '/auth/refresh',
+]);
 
 const DEFAULT_TIMEOUT_MS = 20_000;
 
@@ -224,7 +229,12 @@ async function apiRequest<T>(path: string, options: RequestOptions = {}, retried
   } catch (error) {
     const sessionExpired = error instanceof ApiError && error.status === 401;
 
-    if (!sessionExpired || retried || !shouldAttemptRefresh(path, options) || !isReplayable(options)) {
+    if (
+      !sessionExpired ||
+      retried ||
+      !shouldAttemptRefresh(path, options) ||
+      !isReplayable(options)
+    ) {
       throw error;
     }
 

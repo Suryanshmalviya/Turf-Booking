@@ -33,7 +33,9 @@ export interface PageShellProps {
 /** Vertical page frame. Pages supply their own content only. */
 export function PageShell({ children, tone = 'muted', className }: PageShellProps) {
   return (
-    <section className={cn('min-h-[70vh] py-10', tone === 'muted' ? 'bg-gray-50' : 'bg-white', className)}>
+    <section
+      className={cn('min-h-[70vh] py-10', tone === 'muted' ? 'bg-gray-50' : 'bg-white', className)}
+    >
       {children}
     </section>
   );
@@ -63,7 +65,12 @@ export function PageHeader({
         {eyebrow && (
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-700">{eyebrow}</p>
         )}
-        <h1 className={cn('mt-2 font-bold text-slate-950', size === 'compact' ? 'text-3xl' : 'text-4xl')}>
+        <h1
+          className={cn(
+            'mt-2 font-bold text-slate-950',
+            size === 'compact' ? 'text-3xl' : 'text-4xl'
+          )}
+        >
           {title}
         </h1>
         {description && <p className="mt-3 max-w-2xl text-gray-600">{description}</p>}

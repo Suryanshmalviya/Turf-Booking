@@ -14,7 +14,10 @@ export function BackLink({ to, children, className }: BackLinkProps) {
   return (
     <Link
       to={to}
-      className={cn('inline-flex items-center gap-1 text-sm font-semibold text-primary-700 hover:underline', className)}
+      className={cn(
+        'inline-flex items-center gap-1 text-sm font-semibold text-primary-700 hover:underline',
+        className
+      )}
     >
       <span aria-hidden="true">&larr;</span>
       {children}

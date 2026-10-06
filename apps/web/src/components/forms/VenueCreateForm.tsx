@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 
 import { useCreateVenue } from '../../hooks/useAdmin';
 import { toErrorMessage } from '../../utils/error';
-import { type AdminVenueFormValues,adminVenueSchema } from '../../utils/validation';
+import { type AdminVenueFormValues, adminVenueSchema } from '../../utils/validation';
 import { Button } from '../ui/Button';
 import { Checkbox } from '../ui/Checkbox';
 import { Input } from '../ui/Input';
@@ -62,12 +62,18 @@ export function VenueCreateForm({ onCreated }: VenueCreateFormProps) {
         </FormField>
 
         <FormField form={form} name="line1" label="Address line">
-          {field => <Input placeholder="42 Sports Court Blvd" {...field} {...form.register('line1')} />}
+          {field => (
+            <Input placeholder="42 Sports Court Blvd" {...field} {...form.register('line1')} />
+          )}
         </FormField>
 
         <FormField form={form} name="description" label="Description">
           {field => (
-            <Input placeholder="Tournament grade courts with LED lights" {...field} {...form.register('description')} />
+            <Input
+              placeholder="Tournament grade courts with LED lights"
+              {...field}
+              {...form.register('description')}
+            />
           )}
         </FormField>
       </div>
@@ -86,7 +92,13 @@ export function VenueCreateForm({ onCreated }: VenueCreateFormProps) {
 
           <FormField form={form} name="pricePerHour" label="Price per hour" required>
             {field => (
-              <Input type="number" min="0" step="any" {...field} {...form.register('pricePerHour')} />
+              <Input
+                type="number"
+                min="0"
+                step="any"
+                {...field}
+                {...form.register('pricePerHour')}
+              />
             )}
           </FormField>
         </div>

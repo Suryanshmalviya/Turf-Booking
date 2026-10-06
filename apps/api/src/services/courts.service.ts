@@ -18,7 +18,7 @@ import type { PaginationMeta, SortSpec } from '../types/pagination';
 import { ApiError } from '../utils/api-error';
 import { paginateWithMeta } from '../utils/paginate';
 import { withLegacyPagination } from '../utils/pagination';
-import { containsRegex,exactRegex } from '../utils/query';
+import { containsRegex, exactRegex } from '../utils/query';
 import { parseSort, type SortWhitelist } from '../utils/sort';
 import { isVenueOpenAt } from './availability.service';
 import { getVenueRatingSummary } from './reviews.service';
@@ -55,9 +55,7 @@ export async function isVenueOwner(venueId: string, userId: string): Promise<boo
 }
 
 export async function hasStaffAssignment(venueId: string, userId: string): Promise<boolean> {
-  return Boolean(
-    await VenueStaffAssignmentModel.exists({ venueId, userId, active: true })
-  );
+  return Boolean(await VenueStaffAssignmentModel.exists({ venueId, userId, active: true }));
 }
 
 /**
@@ -189,10 +187,14 @@ export async function updateCourt(
   const filter: FilterQuery<VenueDocument> =
     actor.role === 'admin' ? { _id: venueId } : { _id: venueId, ownerId: actor.sub };
 
-  const venue = await VenueModel.findOneAndUpdate(filter, { $set: input }, {
-    new: true,
-    runValidators: true,
-  });
+  const venue = await VenueModel.findOneAndUpdate(
+    filter,
+    { $set: input },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
   if (!venue) throw ApiError.notFound('Venue');
   return venue;
 }
@@ -245,10 +247,14 @@ export async function updatePitch(
   pitchId: string,
   input: Record<string, unknown>
 ) {
-  const pitch = await PitchModel.findOneAndUpdate({ _id: pitchId, venueId }, { $set: input }, {
-    new: true,
-    runValidators: true,
-  });
+  const pitch = await PitchModel.findOneAndUpdate(
+    { _id: pitchId, venueId },
+    { $set: input },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
   if (!pitch) throw ApiError.notFound('Court');
   return pitch;
 }
@@ -295,11 +301,15 @@ export async function listVenueCalendar(input: {
 }): Promise<{ items: unknown[]; meta: PaginationMeta }> {
   await assertVenueAccess(input.venueId, input.actor);
 
-  const { items, meta } = await paginateWithMeta(BookingModel, {
-    venueId: input.venueId,
-    startAt: { $lt: input.to },
-    endAt: { $gt: input.from },
-  }, { page: 1, limit: 200, sort: { startAt: 1 } });
+  const { items, meta } = await paginateWithMeta(
+    BookingModel,
+    {
+      venueId: input.venueId,
+      startAt: { $lt: input.to },
+      endAt: { $gt: input.from },
+    },
+    { page: 1, limit: 200, sort: { startAt: 1 } }
+  );
 
   return { items, meta };
 }

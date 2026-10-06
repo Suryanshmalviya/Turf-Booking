@@ -75,14 +75,18 @@ export function AdminPaymentsPage() {
       key: 'reference',
       header: 'Reference',
       render: booking => (
-        <span className="font-mono text-xs font-semibold text-slate-950">{booking.publicReference}</span>
+        <span className="font-mono text-xs font-semibold text-slate-950">
+          {booking.publicReference}
+        </span>
       ),
     },
     {
       key: 'amount',
       header: 'Amount',
       render: booking => (
-        <span className="font-medium tabular-nums">{formatMoney(booking.amountMinor, booking.currency)}</span>
+        <span className="font-medium tabular-nums">
+          {formatMoney(booking.amountMinor, booking.currency)}
+        </span>
       ),
     },
     {
@@ -98,13 +102,17 @@ export function AdminPaymentsPage() {
       key: 'booking',
       header: 'Booking status',
       render: booking => (
-        <Badge tone={BOOKING_STATUS_TONE[booking.status]}>{bookingStatusLabel(booking.status)}</Badge>
+        <Badge tone={BOOKING_STATUS_TONE[booking.status]}>
+          {bookingStatusLabel(booking.status)}
+        </Badge>
       ),
     },
     {
       key: 'starts',
       header: 'Starts',
-      render: booking => <span className="text-xs text-gray-500">{formatDateTime(booking.startAt)}</span>,
+      render: booking => (
+        <span className="text-xs text-gray-500">{formatDateTime(booking.startAt)}</span>
+      ),
     },
     {
       key: 'actions',
@@ -147,8 +155,18 @@ export function AdminPaymentsPage() {
               placeholder: 'Search reference…',
             }}
             filters={[
-              { name: 'bookingStatus', label: 'Booking status', options: BOOKING_STATUS_OPTIONS, hideLabel: true },
-              { name: 'paymentStatus', label: 'Payment status on this page', options: PAYMENT_STATUS_OPTIONS, hideLabel: true },
+              {
+                name: 'bookingStatus',
+                label: 'Booking status',
+                options: BOOKING_STATUS_OPTIONS,
+                hideLabel: true,
+              },
+              {
+                name: 'paymentStatus',
+                label: 'Payment status on this page',
+                options: PAYMENT_STATUS_OPTIONS,
+                hideLabel: true,
+              },
             ]}
             values={{ bookingStatus, paymentStatus }}
             onFilterChange={(name, value) => {
@@ -169,16 +187,12 @@ export function AdminPaymentsPage() {
       />
 
       <Notice variant="info">
-        Refunds are raised by the server when a booking is cancelled inside its refund policy, or manually
-        by a venue owner or administrator. This view reports the outcome rather than issuing refunds.
+        Refunds are raised by the server when a booking is cancelled inside its refund policy, or
+        manually by a venue owner or administrator. This view reports the outcome rather than
+        issuing refunds.
       </Notice>
 
-      {selected && (
-        <PaymentDetailModal
-          booking={selected}
-          onClose={() => setSelected(undefined)}
-        />
-      )}
+      {selected && <PaymentDetailModal booking={selected} onClose={() => setSelected(undefined)} />}
     </div>
   );
 }
@@ -220,7 +234,9 @@ function PaymentDetailModal({ booking, onClose }: PaymentDetailModalProps) {
           ))}
         </div>
       ) : payments.isError ? (
-        <Notice variant="danger">{toErrorMessage(payments.error, 'Payment detail could not be loaded.')}</Notice>
+        <Notice variant="danger">
+          {toErrorMessage(payments.error, 'Payment detail could not be loaded.')}
+        </Notice>
       ) : (
         <div className="space-y-6">
           <section>
@@ -253,7 +269,9 @@ function PaymentDetailModal({ booking, onClose }: PaymentDetailModalProps) {
                       <Badge tone={PAYMENT_STATUS_TONE[attempt.status]}>
                         {paymentStatusLabel(attempt.status)}
                       </Badge>
-                      <p className="mt-1 text-xs text-gray-400">{formatDateTime(attempt.createdAt ?? '')}</p>
+                      <p className="mt-1 text-xs text-gray-400">
+                        {formatDateTime(attempt.createdAt ?? '')}
+                      </p>
                     </div>
                   </li>
                 ))}
@@ -287,10 +305,20 @@ function PaymentDetailModal({ booking, onClose }: PaymentDetailModalProps) {
                       )}
                     </div>
                     <div className="text-right">
-                      <Badge tone={refund.status === 'succeeded' ? 'success' : refund.status === 'failed' ? 'danger' : 'warning'}>
+                      <Badge
+                        tone={
+                          refund.status === 'succeeded'
+                            ? 'success'
+                            : refund.status === 'failed'
+                              ? 'danger'
+                              : 'warning'
+                        }
+                      >
                         {refund.status}
                       </Badge>
-                      <p className="mt-1 text-xs text-gray-400">{formatDateTime(refund.createdAt ?? '')}</p>
+                      <p className="mt-1 text-xs text-gray-400">
+                        {formatDateTime(refund.createdAt ?? '')}
+                      </p>
                     </div>
                   </li>
                 ))}
@@ -305,9 +333,14 @@ function PaymentDetailModal({ booking, onClose }: PaymentDetailModalProps) {
             ) : (
               <ul className="mt-2 space-y-1">
                 {audit.map(entry => (
-                  <li key={entry._id ?? `${entry.action}-${entry.createdAt}`} className="text-sm text-gray-600">
+                  <li
+                    key={entry._id ?? `${entry.action}-${entry.createdAt}`}
+                    className="text-sm text-gray-600"
+                  >
                     <span className="font-medium text-slate-950">{entry.action}</span>
-                    <span className="ml-2 text-xs text-gray-400">{formatDateTime(entry.createdAt ?? '')}</span>
+                    <span className="ml-2 text-xs text-gray-400">
+                      {formatDateTime(entry.createdAt ?? '')}
+                    </span>
                   </li>
                 ))}
               </ul>

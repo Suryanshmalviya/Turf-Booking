@@ -92,7 +92,8 @@ export interface PaymentAttemptResult {
 }
 
 /** Where the customer is in the pay step, derived from hold + payment state. */
-export type PaymentState = 'idle' | 'creating_hold' | 'awaiting_payment' | 'paid' | 'confirmed' | 'failed';
+export type PaymentState =
+  'idle' | 'creating_hold' | 'awaiting_payment' | 'paid' | 'confirmed' | 'failed';
 
 /** Filters accepted by `GET /bookings`. */
 export interface BookingListQuery {
@@ -150,7 +151,10 @@ export const PAYMENT_STATUS_TONE: Record<PaymentStatus, BadgeTone> = {
 
 /** `true` when the customer may still cancel or reschedule the booking. */
 export function isMutable(booking: Pick<Booking, 'status' | 'startAt'>): boolean {
-  return ACTIVE_BOOKING_STATUSES.includes(booking.status) && new Date(booking.startAt).getTime() > Date.now();
+  return (
+    ACTIVE_BOOKING_STATUSES.includes(booking.status) &&
+    new Date(booking.startAt).getTime() > Date.now()
+  );
 }
 
 /** `true` when a hold is present but past its deadline. */

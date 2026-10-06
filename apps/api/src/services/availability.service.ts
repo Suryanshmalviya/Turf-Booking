@@ -70,7 +70,11 @@ export function intervalsOverlap(
   return existingStart < requestedEnd && existingEnd > requestedStart;
 }
 
-export function isHoldActive(status: string, holdExpiresAt: Date | undefined, now = new Date()): boolean {
+export function isHoldActive(
+  status: string,
+  holdExpiresAt: Date | undefined,
+  now = new Date()
+): boolean {
   return status === 'held' && holdExpiresAt !== undefined && holdExpiresAt > now;
 }
 
@@ -115,8 +119,12 @@ export function selectPriceRule(
     )
     .filter(rule => rule.startDate === undefined || startAt >= rule.startDate)
     .filter(rule => rule.endDate === undefined || startAt <= rule.endDate)
-    .filter(rule => rule.minDurationMinutes === undefined || durationMinutes >= rule.minDurationMinutes)
-    .filter(rule => rule.maxDurationMinutes === undefined || durationMinutes <= rule.maxDurationMinutes)
+    .filter(
+      rule => rule.minDurationMinutes === undefined || durationMinutes >= rule.minDurationMinutes
+    )
+    .filter(
+      rule => rule.maxDurationMinutes === undefined || durationMinutes <= rule.maxDurationMinutes
+    )
     .sort((left, right) => right.priority - left.priority)[0];
 }
 
@@ -159,7 +167,9 @@ export async function loadAvailabilityContext(
   return { venue, pitch, rules, exceptions, prices };
 }
 
-function operatingWindows(context: AvailabilityContext): Array<{ startMinute: number; endMinute: number }> {
+function operatingWindows(
+  context: AvailabilityContext
+): Array<{ startMinute: number; endMinute: number }> {
   if (context.exceptions.some(exception => exception.kind === 'blackout')) return [];
 
   const specialOpenings = context.exceptions
@@ -210,7 +220,9 @@ export async function calculateAvailability(
   const { venue, pitch } = context;
 
   if (durationMinutes % pitch.slotIncrementMinutes !== 0) {
-    throw ApiError.badRequest(`durationMinutes must be a multiple of ${pitch.slotIncrementMinutes}`);
+    throw ApiError.badRequest(
+      `durationMinutes must be a multiple of ${pitch.slotIncrementMinutes}`
+    );
   }
 
   const windows = operatingWindows(context);
@@ -314,7 +326,10 @@ export async function isVenueOpenAt(
 
   const [rules, exceptions] = await Promise.all([
     AvailabilityRuleModel.find({ venueId: venue._id, dayOfWeek: weekday, isActive: true }).lean(),
-    AvailabilityExceptionModel.find({ venueId: venue._id, date: { $gte: dayStart, $lt: dayEnd } }).lean(),
+    AvailabilityExceptionModel.find({
+      venueId: venue._id,
+      date: { $gte: dayStart, $lt: dayEnd },
+    }).lean(),
   ]);
 
   if (exceptions.some(exception => exception.kind === 'blackout')) return false;

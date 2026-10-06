@@ -27,7 +27,11 @@ export function LoginPage() {
             Sign in to your pickleball booking account
           </p>
 
-          <LoginForm onSuccess={signedIn => navigate(isAdminRole(signedIn.role) ? ROUTES.admin : ROUTES.home)} />
+          <LoginForm
+            onSuccess={signedIn =>
+              navigate(isAdminRole(signedIn.role) ? ROUTES.admin : ROUTES.home)
+            }
+          />
 
           <p className="mt-6 text-center text-sm text-gray-500">
             Don&apos;t have an account?{' '}

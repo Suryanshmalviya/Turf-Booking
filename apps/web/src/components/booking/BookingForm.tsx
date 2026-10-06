@@ -1,4 +1,4 @@
-import { type FormEvent,useState } from 'react';
+import { type FormEvent, useState } from 'react';
 
 import type { Pitch } from '../../types/court';
 import { BOOKING_DURATION_OPTIONS } from '../../types/court';
@@ -91,7 +91,10 @@ export function BookingForm({
       </div>
 
       {validationError && (
-        <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <p
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+        >
           {validationError}
         </p>
       )}

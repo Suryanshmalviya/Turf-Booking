@@ -73,9 +73,13 @@ function accessTokenHeader(token: string) {
 }
 
 function signAccessToken(role: UserRole, subject = new Types.ObjectId().toString()): string {
-  return jwt.sign({ sub: subject, email: `${role}@example.com`, role, jti: randomUUID() }, config.jwt.secret, {
-    expiresIn: '5m',
-  });
+  return jwt.sign(
+    { sub: subject, email: `${role}@example.com`, role, jti: randomUUID() },
+    config.jwt.secret,
+    {
+      expiresIn: '5m',
+    }
+  );
 }
 
 /** Pulls the opaque token out of the most recently issued authentication email. */
@@ -107,7 +111,8 @@ async function register(overrides: Record<string, unknown> = {}): Promise<Sessio
     .post('/api/v1/auth/register')
     .send({ email: EMAIL, password: PASSWORD, displayName: 'Test Player', ...overrides });
 
-  if (response.status !== 201) throw new Error(`Registration failed: ${JSON.stringify(response.body)}`);
+  if (response.status !== 201)
+    throw new Error(`Registration failed: ${JSON.stringify(response.body)}`);
 
   return { cookies: cookieJarFrom(response), userId: response.body.data.user.id };
 }
@@ -178,7 +183,9 @@ describe('registration', () => {
     expect(csrf).toBeDefined();
     // The CSRF cookie must stay readable so the client can echo it in a header.
     expect(csrf).not.toMatch(/HttpOnly/i);
-    expect(JSON.stringify(response.body)).not.toContain(cookieJarFrom(response)[config.auth.accessCookieName]);
+    expect(JSON.stringify(response.body)).not.toContain(
+      cookieJarFrom(response)[config.auth.accessCookieName]
+    );
   });
 
   it('stores the refresh session hashed, never in the clear', async () => {
@@ -249,7 +256,9 @@ describe('login', () => {
   it('signs in a verified account and records the session', async () => {
     const user = await createUser({ password: PASSWORD });
 
-    const response = await request(app).post('/api/v1/auth/login').send({ email: EMAIL, password: PASSWORD });
+    const response = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: EMAIL, password: PASSWORD });
 
     expect(response.status).toBe(200);
     expect(response.body.data.user).toMatchObject({ id: user._id.toString(), role: 'customer' });
@@ -259,7 +268,9 @@ describe('login', () => {
     expect(jar[config.auth.accessCookieName]).toBeTruthy();
     expect(jar[config.auth.refreshCookieName]).toBeTruthy();
 
-    await expect(UserModel.findById(user._id).then(doc => doc!.lastLoginAt)).resolves.toBeInstanceOf(Date);
+    await expect(
+      UserModel.findById(user._id).then(doc => doc!.lastLoginAt)
+    ).resolves.toBeInstanceOf(Date);
     await expect(AuthSessionModel.countDocuments({ userId: user._id })).resolves.toBe(1);
   });
 
@@ -295,7 +306,9 @@ describe('login', () => {
   it('refuses an unverified account until the address is confirmed', async () => {
     await createUser({ password: PASSWORD, emailVerified: false });
 
-    const response = await request(app).post('/api/v1/auth/login').send({ email: EMAIL, password: PASSWORD });
+    const response = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: EMAIL, password: PASSWORD });
 
     expect(response.status).toBe(403);
     expect(response.body.error.code).toBe('FORBIDDEN');
@@ -306,7 +319,9 @@ describe('login', () => {
   it('refuses a suspended account', async () => {
     await createUser({ password: PASSWORD, status: 'suspended' });
 
-    const response = await request(app).post('/api/v1/auth/login').send({ email: EMAIL, password: PASSWORD });
+    const response = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: EMAIL, password: PASSWORD });
 
     expect(response.status).toBe(403);
     expect(response.body.error.code).toBe('FORBIDDEN');
@@ -323,16 +338,25 @@ describe('logout', () => {
 
     expect(response.status).toBe(204);
     const cookies = response.headers['set-cookie'] as unknown as string[];
-    expect(cookies.some(cookie => cookie.startsWith(`${config.auth.refreshCookieName}=;`))).toBe(true);
-    expect(cookies.some(cookie => cookie.startsWith(`${config.auth.accessCookieName}=;`))).toBe(true);
+    expect(cookies.some(cookie => cookie.startsWith(`${config.auth.refreshCookieName}=;`))).toBe(
+      true
+    );
+    expect(cookies.some(cookie => cookie.startsWith(`${config.auth.accessCookieName}=;`))).toBe(
+      true
+    );
 
     const refresh = await request(app)
       .post('/api/v1/auth/refresh')
-      .set('Cookie', `${config.auth.csrfCookieName}=x; ${config.auth.refreshCookieName}=${refreshToken}`)
+      .set(
+        'Cookie',
+        `${config.auth.csrfCookieName}=x; ${config.auth.refreshCookieName}=${refreshToken}`
+      )
       .set(config.auth.csrfHeaderName, 'x');
 
     expect(refresh.status).toBe(401);
-    await expect(AuthSessionModel.countDocuments({ revokedAt: { $exists: false } })).resolves.toBe(0);
+    await expect(AuthSessionModel.countDocuments({ revokedAt: { $exists: false } })).resolves.toBe(
+      0
+    );
   });
 
   it('requires the CSRF header when it is driven by cookies', async () => {
@@ -396,7 +420,10 @@ describe('refresh token rotation', () => {
     );
     const foreign = await request(app)
       .post('/api/v1/auth/refresh')
-      .set('Cookie', `${config.auth.csrfCookieName}=x; ${config.auth.refreshCookieName}=${wrongSecret}`)
+      .set(
+        'Cookie',
+        `${config.auth.csrfCookieName}=x; ${config.auth.refreshCookieName}=${wrongSecret}`
+      )
       .set(config.auth.csrfHeaderName, 'x');
     expect(foreign.status).toBe(401);
   });
@@ -474,7 +501,10 @@ describe('current user and profile', () => {
 
     const response = await request(app)
       .get('/api/v1/auth/me')
-      .set('Cookie', `${config.auth.accessCookieName}=${session.cookies[config.auth.accessCookieName]}`);
+      .set(
+        'Cookie',
+        `${config.auth.accessCookieName}=${session.cookies[config.auth.accessCookieName]}`
+      );
 
     expect(response.status).toBe(200);
     expect(response.body.data.user).toMatchObject({
@@ -519,7 +549,9 @@ describe('email verification', () => {
     expect(stored!.emailVerified).toBe(true);
     expect(stored!.emailVerifiedAt).toBeInstanceOf(Date);
 
-    const allowed = await request(app).post('/api/v1/auth/login').send({ email: EMAIL, password: PASSWORD });
+    const allowed = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: EMAIL, password: PASSWORD });
     expect(allowed.status).toBe(200);
     expect(session.userId).toBe(stored!._id.toString());
   });
@@ -579,7 +611,9 @@ describe('email verification', () => {
     const session = await register();
     const firstToken = latestToken('email_verification');
 
-    const resent = await withSession(session)(request(app).post('/api/v1/auth/resend-verification'));
+    const resent = await withSession(session)(
+      request(app).post('/api/v1/auth/resend-verification')
+    );
     expect(resent.status).toBe(202);
 
     const secondToken = latestToken('email_verification');
@@ -597,7 +631,9 @@ describe('email verification', () => {
     const user = await createUser({ password: PASSWORD });
     const { session } = await login();
 
-    const response = await withSession(session)(request(app).post('/api/v1/auth/resend-verification'));
+    const response = await withSession(session)(
+      request(app).post('/api/v1/auth/resend-verification')
+    );
 
     expect(response.status).toBe(200);
     expect(response.body.data.emailVerified).toBe(true);
@@ -614,7 +650,9 @@ describe('email verification', () => {
     const session = await register();
     delivered.length = 0;
 
-    const response = await withSession(session)(request(app).post('/api/v1/auth/resend-verification'));
+    const response = await withSession(session)(
+      request(app).post('/api/v1/auth/resend-verification')
+    );
 
     expect(response.status).toBe(202);
     expect(delivered).toEqual([EMAIL]);
@@ -646,9 +684,10 @@ describe('forgot password', () => {
     expect(response.status).toBe(202);
 
     const token = latestToken('password_reset');
-    const stored = await AuthTokenModel.findOne({ userId: user._id, purpose: 'password_reset' }).select(
-      '+tokenHash'
-    );
+    const stored = await AuthTokenModel.findOne({
+      userId: user._id,
+      purpose: 'password_reset',
+    }).select('+tokenHash');
     expect(stored!.tokenHash).toBe(hashAuthToken(token));
     expect(stored!.tokenHash).not.toBe(token);
 
@@ -680,7 +719,9 @@ describe('forgot password', () => {
   });
 
   it('validates the submitted address', async () => {
-    const response = await request(app).post('/api/v1/auth/forgot-password').send({ email: 'nope' });
+    const response = await request(app)
+      .post('/api/v1/auth/forgot-password')
+      .send({ email: 'nope' });
 
     expect(response.status).toBe(400);
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
@@ -721,12 +762,17 @@ describe('reset password', () => {
 
     const staleRefresh = await request(app)
       .post('/api/v1/auth/refresh')
-      .set('Cookie', `${config.auth.csrfCookieName}=x; ${config.auth.refreshCookieName}=${refreshToken}`)
+      .set(
+        'Cookie',
+        `${config.auth.csrfCookieName}=x; ${config.auth.refreshCookieName}=${refreshToken}`
+      )
       .set(config.auth.csrfHeaderName, 'x');
     expect(staleRefresh.status).toBe(401);
 
     const cookies = response.headers['set-cookie'] as unknown as string[];
-    expect(cookies.some(cookie => cookie.startsWith(`${config.auth.accessCookieName}=;`))).toBe(true);
+    expect(cookies.some(cookie => cookie.startsWith(`${config.auth.accessCookieName}=;`))).toBe(
+      true
+    );
   });
 
   it('rejects an expired, replayed or malformed recovery token', async () => {

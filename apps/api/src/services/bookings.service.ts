@@ -1,8 +1,12 @@
-import mongoose, { type FilterQuery,Types } from 'mongoose';
+import mongoose, { type FilterQuery, Types } from 'mongoose';
 
 import { config, logger } from '../config';
 import { AuditLogModel } from '../models/admin.model';
-import { type BookingDocument, BookingInventoryModel, BookingModel } from '../models/bookings.model';
+import {
+  type BookingDocument,
+  BookingInventoryModel,
+  BookingModel,
+} from '../models/bookings.model';
 import { VenueModel } from '../models/courts.model';
 import { PaymentAttemptModel } from '../models/payments.model';
 import { VenueStaffAssignmentModel } from '../models/users.model';
@@ -135,7 +139,9 @@ export async function createBookingHold(input: CreateHoldInput) {
 
   const { pitch } = await loadAvailabilityContext(input.venueId, input.pitchId, localDateKey);
   const expiresAt = new Date(Date.now() + config.booking.holdMinutes * 60 * 1000);
-  const occupiedStart = new Date(requested.startAt.getTime() - pitch.bufferBeforeMinutes * 60 * 1000);
+  const occupiedStart = new Date(
+    requested.startAt.getTime() - pitch.bufferBeforeMinutes * 60 * 1000
+  );
   const occupiedEnd = new Date(requested.endAt.getTime() + pitch.bufferAfterMinutes * 60 * 1000);
   const slots = slotKeys(occupiedStart, occupiedEnd, pitch.slotIncrementMinutes);
 
@@ -150,7 +156,11 @@ export async function createBookingHold(input: CreateHoldInput) {
       }).session(session);
 
       if (existing) {
-        if (existing.status === 'held' && existing.holdExpiresAt && existing.holdExpiresAt > new Date()) {
+        if (
+          existing.status === 'held' &&
+          existing.holdExpiresAt &&
+          existing.holdExpiresAt > new Date()
+        ) {
           booking = existing;
           return;
         }
@@ -244,7 +254,8 @@ export async function confirmBookingHold(userId: string, bookingId: string) {
         currency: booking.currency,
       }).session(session);
 
-      if (!paidAttempt) throw ApiError.conflict('A verified payment matching this booking is required');
+      if (!paidAttempt)
+        throw ApiError.conflict('A verified payment matching this booking is required');
 
       booking.status = 'confirmed';
       booking.paymentStatus = 'paid';
@@ -296,11 +307,15 @@ export async function listBookings(query: ListBookingsQuery) {
     };
   }
 
-  const page = await paginateWithMeta<BookingDocument, Record<string, unknown>>(BookingModel, filter, {
-    page: query.page,
-    limit: query.limit,
-    sort: parseSort(query.sort, BOOKING_SORT_WHITELIST, BOOKING_SORT_FALLBACK),
-  });
+  const page = await paginateWithMeta<BookingDocument, Record<string, unknown>>(
+    BookingModel,
+    filter,
+    {
+      page: query.page,
+      limit: query.limit,
+      sort: parseSort(query.sort, BOOKING_SORT_WHITELIST, BOOKING_SORT_FALLBACK),
+    }
+  );
 
   return withLegacyPagination(page);
 }
@@ -393,6 +408,9 @@ export async function cancelBooking(input: CancelBookingInput) {
     }
   }
 
-  logger.info({ bookingId: booking._id, refundPercent, actorId: input.actor.sub }, 'Booking cancelled');
+  logger.info(
+    { bookingId: booking._id, refundPercent, actorId: input.actor.sub },
+    'Booking cancelled'
+  );
   return booking;
 }

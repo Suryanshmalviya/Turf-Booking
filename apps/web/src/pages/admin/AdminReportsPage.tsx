@@ -117,7 +117,11 @@ export function AdminReportsPage() {
         <ReportStat
           label="Gross revenue"
           value={
-            report.isLoading ? '—' : revenue ? formatMoney(revenue.grossMinor, revenue.currency) : '—'
+            report.isLoading
+              ? '—'
+              : revenue
+                ? formatMoney(revenue.grossMinor, revenue.currency)
+                : '—'
           }
           hint={data?.definitions.grossBookingValue}
           {...(revenue?.mixed ? { tone: 'warning' as const } : {})}
@@ -125,7 +129,11 @@ export function AdminReportsPage() {
         <ReportStat
           label="Refunded"
           value={
-            report.isLoading ? '—' : revenue ? formatMoney(revenue.refundedMinor, revenue.currency) : '—'
+            report.isLoading
+              ? '—'
+              : revenue
+                ? formatMoney(revenue.refundedMinor, revenue.currency)
+                : '—'
           }
           hint={data?.definitions.refunds}
         />
@@ -178,7 +186,9 @@ export function AdminReportsPage() {
                 { dataKey: 'gross', name: 'Gross revenue' },
                 { dataKey: 'bookings', name: 'Bookings' },
               ]}
-              valueFormatter={value => value.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              valueFormatter={value =>
+                value.toLocaleString(undefined, { maximumFractionDigits: 0 })
+              }
             />
           )}
         </ChartCard>
@@ -212,7 +222,7 @@ export function AdminReportsPage() {
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 8 }, (_, index) => (
               <Skeleton key={index} className="h-16 w-full" />
-              ))}
+            ))}
           </div>
         ) : (
           <dl className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -247,7 +257,9 @@ export function AdminReportsPage() {
               >
                 <span className="font-mono text-xs text-gray-500">{row._id.slice(-8)}</span>
                 <span className="flex items-center gap-2">
-                  <Badge tone={row.average >= 4 ? 'success' : row.average >= 3 ? 'warning' : 'danger'}>
+                  <Badge
+                    tone={row.average >= 4 ? 'success' : row.average >= 3 ? 'warning' : 'danger'}
+                  >
                     {row.average.toFixed(1)}
                   </Badge>
                   <span className="text-xs text-gray-500">{formatCount(row.count)} reviews</span>
@@ -259,7 +271,10 @@ export function AdminReportsPage() {
       </Card>
 
       <Card>
-        <CardHeader title="Definitions" description="Exactly how the server computes each figure." />
+        <CardHeader
+          title="Definitions"
+          description="Exactly how the server computes each figure."
+        />
         <dl className="mt-4 space-y-3">
           {Object.entries(data?.definitions ?? {}).map(([key, definition]) => (
             <div key={key}>
@@ -268,7 +283,9 @@ export function AdminReportsPage() {
             </div>
           ))}
         </dl>
-        <p className="mt-4 text-xs text-gray-400">Report generated {formatDateTime(new Date().toISOString())}.</p>
+        <p className="mt-4 text-xs text-gray-400">
+          Report generated {formatDateTime(new Date().toISOString())}.
+        </p>
       </Card>
     </div>
   );
@@ -283,7 +300,9 @@ interface ReportStatProps {
 
 function ReportStat({ label, value, hint, tone }: ReportStatProps) {
   return (
-    <div className={`rounded-xl border p-5 ${tone === 'warning' ? 'border-amber-200 bg-amber-50' : 'border-gray-200 bg-white'}`}>
+    <div
+      className={`rounded-xl border p-5 ${tone === 'warning' ? 'border-amber-200 bg-amber-50' : 'border-gray-200 bg-white'}`}
+    >
       <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</p>
       <p className="mt-2 text-2xl font-bold text-slate-950 tabular-nums">{value}</p>
       {hint && <p className="mt-2 text-xs text-gray-500">{hint}</p>}
@@ -295,7 +314,9 @@ function Volume({ label, value }: { label: string; value?: number }) {
   return (
     <div className="rounded-lg border border-gray-200 p-3">
       <dt className="text-xs uppercase tracking-wide text-gray-500">{label}</dt>
-      <dd className="mt-1 text-lg font-bold text-slate-950 tabular-nums">{formatCount(value ?? 0)}</dd>
+      <dd className="mt-1 text-lg font-bold text-slate-950 tabular-nums">
+        {formatCount(value ?? 0)}
+      </dd>
     </div>
   );
 }

@@ -82,7 +82,10 @@ const environmentSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     PORT: z.coerce.number().int().positive().default(4000),
-    API_VERSION: z.string().regex(/^v\d+$/, 'Must look like v1').default('v1'),
+    API_VERSION: z
+      .string()
+      .regex(/^v\d+$/, 'Must look like v1')
+      .default('v1'),
     API_PREFIX: z.string().min(1).optional(),
     FRONTEND_URL: z.string().url().default('http://localhost:5173'),
     MONGODB_URI: z.string().trim().min(1).default('mongodb://localhost:27017/pickleball_booking'),

@@ -1,4 +1,4 @@
-import { type ReactNode,useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 import { cn } from '../../utils/cn';
 import { Button } from '../ui/Button';
@@ -92,7 +92,9 @@ export function FilterBar({
         <Select
           key={filter.name}
           label={filter.label}
-          {...(filter.hideLabel === undefined ? { hideLabel: true } : { hideLabel: filter.hideLabel })}
+          {...(filter.hideLabel === undefined
+            ? { hideLabel: true }
+            : { hideLabel: filter.hideLabel })}
           className="w-full sm:w-48"
           value={values[filter.name] ?? ''}
           options={filter.options}

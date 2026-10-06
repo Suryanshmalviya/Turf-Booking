@@ -63,7 +63,9 @@ export function PaymentStatusCard({
     >
       <div className="flex items-baseline justify-between gap-4">
         <p className="text-sm font-semibold text-gray-700">{label}</p>
-        <p className="text-xl font-bold text-slate-950 tabular-nums">{formatMoney(amountMinor, currency)}</p>
+        <p className="text-xl font-bold text-slate-950 tabular-nums">
+          {formatMoney(amountMinor, currency)}
+        </p>
       </div>
 
       <p className="mt-3 text-sm text-gray-600">
@@ -76,7 +78,9 @@ export function PaymentStatusCard({
       </p>
 
       {developmentOnlyMessage && (
-        <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{developmentOnlyMessage}</p>
+        <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+          {developmentOnlyMessage}
+        </p>
       )}
 
       {error && (

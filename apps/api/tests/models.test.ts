@@ -55,7 +55,11 @@ describe('booking model', () => {
   });
 
   it('rejects fractional money amounts', () => {
-    const booking = new BookingModel({ ...baseBooking, publicReference: 'PB-TEST-003', amountMinor: 12.5 });
+    const booking = new BookingModel({
+      ...baseBooking,
+      publicReference: 'PB-TEST-003',
+      amountMinor: 12.5,
+    });
 
     expect(booking.validateSync()?.errors.amountMinor).toBeDefined();
   });
@@ -92,8 +96,12 @@ describe('review model', () => {
   });
 
   it('enforces a 1-5 integer rating', () => {
-    expect(new ReviewModel({ ...baseReview, rating: 0 }).validateSync()?.errors.rating).toBeDefined();
-    expect(new ReviewModel({ ...baseReview, rating: 6 }).validateSync()?.errors.rating).toBeDefined();
+    expect(
+      new ReviewModel({ ...baseReview, rating: 0 }).validateSync()?.errors.rating
+    ).toBeDefined();
+    expect(
+      new ReviewModel({ ...baseReview, rating: 6 }).validateSync()?.errors.rating
+    ).toBeDefined();
     expect(
       new ReviewModel({ ...baseReview, rating: 4.5 }).validateSync()?.errors.rating
     ).toBeDefined();

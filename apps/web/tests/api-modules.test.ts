@@ -158,7 +158,8 @@ describe('authApi', () => {
         status: 401,
         ok: false,
         headers: { get: () => null },
-        text: async () => JSON.stringify({ success: false, error: { message: 'Authentication required' } }),
+        text: async () =>
+          JSON.stringify({ success: false, error: { message: 'Authentication required' } }),
       }))
     );
     await expect(authApi.me()).resolves.toBeNull();
@@ -187,7 +188,10 @@ describe('authApi', () => {
   it('redeems a recovery token with the new password', async () => {
     stubApi({ message: 'Your password has been reset.', revokedSessions: 3 });
 
-    const result = await authApi.resetPassword({ token: 'a'.repeat(64), password: 'Str0ngPassphrase' });
+    const result = await authApi.resetPassword({
+      token: 'a'.repeat(64),
+      password: 'Str0ngPassphrase',
+    });
 
     expect(path()).toBe('/auth/reset-password');
     expect(body()).toEqual({ token: 'a'.repeat(64), password: 'Str0ngPassphrase' });
@@ -282,7 +286,9 @@ describe('courtApi', () => {
     expect(path(1)).toBe('/courts/venue-1/schedule');
 
     await courtApi.availability('venue-1', 'pitch-1', '2026-09-24', 60);
-    expect(path(2)).toBe('/courts/venue-1/pitches/pitch-1/availability?date=2026-09-24&durationMinutes=60');
+    expect(path(2)).toBe(
+      '/courts/venue-1/pitches/pitch-1/availability?date=2026-09-24&durationMinutes=60'
+    );
   });
 
   it('manages venues and pitches for owners', async () => {
@@ -332,7 +338,12 @@ describe('bookingApi', () => {
     stubApi({ booking: { _id: 'booking-1' } });
 
     await bookingApi.createHold(
-      { venueId: 'venue-1', pitchId: 'pitch-1', startAt: '2026-09-24T10:00:00.000Z', durationMinutes: 60 },
+      {
+        venueId: 'venue-1',
+        pitchId: 'pitch-1',
+        startAt: '2026-09-24T10:00:00.000Z',
+        durationMinutes: 60,
+      },
       'hold-1'
     );
 
@@ -358,7 +369,10 @@ describe('bookingApi', () => {
 
 describe('paymentApi', () => {
   it('starts an attempt with an idempotency key', async () => {
-    stubApi({ attempt: { status: 'paid', amountMinor: 1200, currency: 'INR' }, developmentOnly: true });
+    stubApi({
+      attempt: { status: 'paid', amountMinor: 1200, currency: 'INR' },
+      developmentOnly: true,
+    });
 
     const result = await paymentApi.createAttempt('booking-1', 'hold-1-payment');
 

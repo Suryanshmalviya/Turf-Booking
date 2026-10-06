@@ -71,7 +71,10 @@ export function AdminDashboardPage() {
     <div className="space-y-8">
       {failed && (
         <ErrorState
-          message={toErrorMessage(database.error ?? report.error, 'We could not load dashboard metrics.')}
+          message={toErrorMessage(
+            database.error ?? report.error,
+            'We could not load dashboard metrics.'
+          )}
           onRetry={() => {
             void database.refetch();
             void report.refetch();
@@ -110,7 +113,9 @@ export function AdminDashboardPage() {
               data={revenue}
               xKey="currency"
               series={[{ dataKey: 'gross', name: 'Gross revenue' }]}
-              valueFormatter={value => value.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              valueFormatter={value =>
+                value.toLocaleString(undefined, { maximumFractionDigits: 0 })
+              }
             />
           )}
         </ChartCard>
@@ -160,10 +165,18 @@ export function AdminDashboardPage() {
                 <caption className="sr-only">Booked minutes and booking counts per venue</caption>
                 <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                   <tr>
-                    <th scope="col" className="px-4 py-3 font-semibold">Venue</th>
-                    <th scope="col" className="px-4 py-3 font-semibold">Booked hours</th>
-                    <th scope="col" className="px-4 py-3 font-semibold">Bookings</th>
-                    <th scope="col" className="px-4 py-3 font-semibold">Avg per booking</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">
+                      Venue
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-semibold">
+                      Booked hours
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-semibold">
+                      Bookings
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-semibold">
+                      Avg per booking
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -174,7 +187,9 @@ export function AdminDashboardPage() {
                         {row.bookedHours.toLocaleString()}
                       </td>
                       <td className="px-4 py-3 tabular-nums">{formatCount(row.bookings)}</td>
-                      <td className="px-4 py-3 tabular-nums">{formatDuration(row.avgMinutesPerBooking)}</td>
+                      <td className="px-4 py-3 tabular-nums">
+                        {formatDuration(row.avgMinutesPerBooking)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -215,11 +230,21 @@ export function AdminDashboardPage() {
               <caption className="sr-only">Most recently created bookings</caption>
               <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                 <tr>
-                  <th scope="col" className="px-4 py-3 font-semibold">Reference</th>
-                  <th scope="col" className="px-4 py-3 font-semibold">Starts</th>
-                  <th scope="col" className="px-4 py-3 font-semibold">Amount</th>
-                  <th scope="col" className="px-4 py-3 font-semibold">Booking</th>
-                  <th scope="col" className="px-4 py-3 font-semibold">Payment</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">
+                    Reference
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-semibold">
+                    Starts
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-semibold">
+                    Amount
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-semibold">
+                    Booking
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-semibold">
+                    Payment
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -277,8 +302,13 @@ function MetricGrid({ metrics, isLoading }: MetricGridProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {metrics.map(metric => (
-        <div key={metric.id} className={cn('rounded-xl border p-5', TONE_CLASS[metric.tone ?? 'default'])}>
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{metric.label}</p>
+        <div
+          key={metric.id}
+          className={cn('rounded-xl border p-5', TONE_CLASS[metric.tone ?? 'default'])}
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            {metric.label}
+          </p>
           {isLoading ? (
             <Skeleton className="mt-2 h-8 w-24" />
           ) : (

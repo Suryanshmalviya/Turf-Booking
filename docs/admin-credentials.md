@@ -27,9 +27,11 @@ _(Secondary admin account: `kingaadarsh5@gmail.com` with password `Admin@12345`)
    ```
 
 2. **Backend Config Validation**:
+
    - `apps/api/src/config/index.ts`
 
 3. **Automatic Database Bootstrap**:
+
    - `apps/api/src/config/admin-bootstrap.ts`
    - Automatically synchronizes the admin account and password hash into MongoDB collection `users` every time the server starts up.
 

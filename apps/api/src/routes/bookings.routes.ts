@@ -16,7 +16,12 @@ const router = Router();
 
 router.use(authenticate());
 
-router.get('/', authorize('customer', 'admin'), validate(listMyBookingsSchema), bookingsController.listMine);
+router.get(
+  '/',
+  authorize('customer', 'admin'),
+  validate(listMyBookingsSchema),
+  bookingsController.listMine
+);
 router.get('/:bookingId', validate(bookingIdParamsSchema), bookingsController.getMine);
 
 router.post(

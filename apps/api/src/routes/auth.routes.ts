@@ -37,9 +37,24 @@ router.post('/refresh', requireCsrf, authController.refresh);
 router.post('/logout', requireCsrf, authController.logout);
 router.get('/me', authenticate(), authController.me);
 
-router.post('/forgot-password', recoveryLimiter, validate(forgotPasswordSchema), authController.forgotPassword);
-router.post('/reset-password', recoveryLimiter, validate(resetPasswordSchema), authController.resetPassword);
-router.post('/verify-email', credentialLimiter, validate(verifyEmailSchema), authController.verifyEmail);
+router.post(
+  '/forgot-password',
+  recoveryLimiter,
+  validate(forgotPasswordSchema),
+  authController.forgotPassword
+);
+router.post(
+  '/reset-password',
+  recoveryLimiter,
+  validate(resetPasswordSchema),
+  authController.resetPassword
+);
+router.post(
+  '/verify-email',
+  credentialLimiter,
+  validate(verifyEmailSchema),
+  authController.verifyEmail
+);
 router.post(
   '/resend-verification',
   credentialLimiter,

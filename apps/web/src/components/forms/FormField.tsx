@@ -67,7 +67,11 @@ export function FormField<TValues extends FieldValues>({
 
 /** Right-aligned submit row shared by every form. */
 export function FormActions({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('flex flex-wrap items-center justify-end gap-3 pt-2', className)}>{children}</div>;
+  return (
+    <div className={cn('flex flex-wrap items-center justify-end gap-3 pt-2', className)}>
+      {children}
+    </div>
+  );
 }
 
 /** Form-level error, typically an API rejection that is not field-specific. */

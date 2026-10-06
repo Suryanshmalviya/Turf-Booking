@@ -95,7 +95,11 @@ export function DataTable<TRow>({
             <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
               <tr>
                 {columns.map(column => (
-                  <th key={column.key} scope="col" className={cn('px-5 py-3 font-semibold', column.className)}>
+                  <th
+                    key={column.key}
+                    scope="col"
+                    className={cn('px-5 py-3 font-semibold', column.className)}
+                  >
                     {column.header}
                   </th>
                 ))}
@@ -103,9 +107,15 @@ export function DataTable<TRow>({
             </thead>
             <tbody>
               {rows.map((row, index) => (
-                <tr key={rowKey(row, index)} className="border-t border-gray-100 align-middle hover:bg-gray-50/60">
+                <tr
+                  key={rowKey(row, index)}
+                  className="border-t border-gray-100 align-middle hover:bg-gray-50/60"
+                >
                   {columns.map(column => (
-                    <td key={column.key} className={cn('px-5 py-3 text-gray-700', column.className)}>
+                    <td
+                      key={column.key}
+                      className={cn('px-5 py-3 text-gray-700', column.className)}
+                    >
                       {column.render(row, index)}
                     </td>
                   ))}

@@ -193,7 +193,9 @@ describe('password recovery endpoints', () => {
   });
 
   it('validates the recovery request body', async () => {
-    const response = await request(app).post('/api/v1/auth/forgot-password').send({ email: 'nope' });
+    const response = await request(app)
+      .post('/api/v1/auth/forgot-password')
+      .send({ email: 'nope' });
 
     expect(response.status).toBe(400);
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
@@ -366,13 +368,20 @@ describe('role-based authorization middleware', () => {
 
   it('permits a self-service route only for the owner or an administrator', () => {
     const owner = { params: { userId: 'me' }, user: { sub: 'me', role: 'customer' } } as never;
-    const other = { params: { userId: 'someone-else' }, user: { sub: 'me', role: 'customer' } } as never;
+    const other = {
+      params: { userId: 'someone-else' },
+      user: { sub: 'me', role: 'customer' },
+    } as never;
 
     const allowed = vi.fn();
     const denied = vi.fn();
     requireSelfOrAdmin()(owner, {} as never, allowed);
     requireSelfOrAdmin()(other, {} as never, denied);
-    requireSelfOrAdmin()({ params: { userId: 'me' }, user: { sub: 'admin', role: 'admin' } } as never, {} as never, allowed);
+    requireSelfOrAdmin()(
+      { params: { userId: 'me' }, user: { sub: 'admin', role: 'admin' } } as never,
+      {} as never,
+      allowed
+    );
 
     expect(allowed).toHaveBeenCalledTimes(2);
     expect((denied.mock.calls[0][0] as ApiError).statusCode).toBe(403);
@@ -396,11 +405,7 @@ describe('CSRF middleware', () => {
   it('requires both the cookie and the header to be present', () => {
     const next = vi.fn();
 
-    requireCsrf(
-      { method: 'POST', cookies: {}, header: () => 'token' } as never,
-      {} as never,
-      next
-    );
+    requireCsrf({ method: 'POST', cookies: {}, header: () => 'token' } as never, {} as never, next);
     requireCsrf(
       { method: 'POST', cookies: { pb_csrf: 'token' }, header: () => undefined } as never,
       {} as never,
@@ -408,9 +413,9 @@ describe('CSRF middleware', () => {
     );
 
     expect(next).toHaveBeenCalledTimes(2);
-    expect(next.mock.calls.every(([error]) => (error as ApiError).message === 'CSRF validation failed')).toBe(
-      true
-    );
+    expect(
+      next.mock.calls.every(([error]) => (error as ApiError).message === 'CSRF validation failed')
+    ).toBe(true);
   });
 
   it('allows safe methods and matching tokens through', () => {

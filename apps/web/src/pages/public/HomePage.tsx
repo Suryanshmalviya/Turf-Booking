@@ -19,7 +19,12 @@ const FEATURES = [
           strokeWidth={2}
           d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 12a7.975 7.975 0 01-2.343 6.657z"
         />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+        />
       </svg>
     ),
   },
@@ -57,8 +62,16 @@ const FEATURES = [
 
 const STEPS = [
   { number: '01', title: 'Search & filter', description: 'Enter your location, date and time.' },
-  { number: '02', title: 'Select & book', description: 'Pick a court and slot, then confirm your hold.' },
-  { number: '03', title: 'Play & enjoy', description: 'Receive instant confirmation and turn up to play.' },
+  {
+    number: '02',
+    title: 'Select & book',
+    description: 'Pick a court and slot, then confirm your hold.',
+  },
+  {
+    number: '03',
+    title: 'Play & enjoy',
+    description: 'Receive instant confirmation and turn up to play.',
+  },
 ];
 
 export function HomePage() {
@@ -117,7 +130,10 @@ export function HomePage() {
         </Container>
       </section>
 
-      <section className="relative py-20 text-white sm:py-28" style={background('/cta-pickleball.png')}>
+      <section
+        className="relative py-20 text-white sm:py-28"
+        style={background('/cta-pickleball.png')}
+      >
         <div className="absolute inset-0 bg-black/60" aria-hidden="true" />
         <Container size="wide" className="relative z-10 text-center">
           <h2 className="mb-4 text-3xl font-bold drop-shadow-lg sm:text-5xl">Ready to Play?</h2>
@@ -136,7 +152,15 @@ export function HomePage() {
   );
 }
 
-function StepCard({ number, title, description }: { number: string; title: string; description: string }) {
+function StepCard({
+  number,
+  title,
+  description,
+}: {
+  number: string;
+  title: string;
+  description: string;
+}) {
   return (
     <Card className="relative p-6">
       <span className="absolute -top-3 left-6 rounded-full bg-primary-600 px-3 py-1 text-sm font-bold text-white">

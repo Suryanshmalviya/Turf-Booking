@@ -84,7 +84,9 @@ export function ConfirmActionDialog({
       open={open}
       onClose={onClose}
       title={title}
-      {...(description ? { description: typeof description === 'string' ? description : undefined } : {})}
+      {...(description
+        ? { description: typeof description === 'string' ? description : undefined }
+        : {})}
       size="md"
       closeOnOverlayClick={!isPending}
       className={cn(className)}
@@ -93,7 +95,12 @@ export function ConfirmActionDialog({
           <Button variant="secondary" onClick={onClose} disabled={isPending}>
             {cancelLabel}
           </Button>
-          <Button variant={confirmVariant} onClick={confirm} loading={isPending} disabled={!canConfirm}>
+          <Button
+            variant={confirmVariant}
+            onClick={confirm}
+            loading={isPending}
+            disabled={!canConfirm}
+          >
             {confirmLabel}
           </Button>
         </>

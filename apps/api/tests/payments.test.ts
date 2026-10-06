@@ -82,7 +82,9 @@ describe('development payment adapter', () => {
 
     try {
       expect(() => getPaymentProvider()).toThrow(ApiError);
-      expect(() => getPaymentProvider()).toThrow(/PAYMENT_PROVIDER_NOT_CONFIGURED|No payment provider/);
+      expect(() => getPaymentProvider()).toThrow(
+        /PAYMENT_PROVIDER_NOT_CONFIGURED|No payment provider/
+      );
     } finally {
       config.payments.provider = previous;
     }
@@ -98,13 +100,22 @@ describe('payment outcome mapping', () => {
 
   it('rejects amount or currency mismatches against the trusted snapshot', () => {
     expect(
-      paymentMatchesSnapshot({ amountMinor: 1200, currency: 'INR' }, { amountMinor: 1200, currency: 'inr' })
+      paymentMatchesSnapshot(
+        { amountMinor: 1200, currency: 'INR' },
+        { amountMinor: 1200, currency: 'inr' }
+      )
     ).toBe(true);
     expect(
-      paymentMatchesSnapshot({ amountMinor: 1200, currency: 'INR' }, { amountMinor: 1199, currency: 'INR' })
+      paymentMatchesSnapshot(
+        { amountMinor: 1200, currency: 'INR' },
+        { amountMinor: 1199, currency: 'INR' }
+      )
     ).toBe(false);
     expect(
-      paymentMatchesSnapshot({ amountMinor: 1200, currency: 'INR' }, { amountMinor: 1200, currency: 'USD' })
+      paymentMatchesSnapshot(
+        { amountMinor: 1200, currency: 'INR' },
+        { amountMinor: 1200, currency: 'USD' }
+      )
     ).toBe(false);
   });
 });

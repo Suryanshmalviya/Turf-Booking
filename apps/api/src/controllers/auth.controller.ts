@@ -1,7 +1,13 @@
 import type { Request, Response } from 'express';
 
 import { logger } from '../config';
-import { clearAuthCookies, csrfCookie, refreshCookie, setAuthCookies, setCsrfCookie } from '../middleware/auth.middleware';
+import {
+  clearAuthCookies,
+  csrfCookie,
+  refreshCookie,
+  setAuthCookies,
+  setCsrfCookie,
+} from '../middleware/auth.middleware';
 import {
   confirmEmailAddress,
   getCurrentUser,

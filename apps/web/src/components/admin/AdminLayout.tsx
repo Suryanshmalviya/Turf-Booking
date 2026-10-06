@@ -37,11 +37,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <PageShell>
       <Container size="wide">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-700">Platform operations</p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-700">
+          Platform operations
+        </p>
         <h1 className="mt-2 text-4xl font-bold text-slate-950">Admin console</h1>
         <p className="mt-3 max-w-3xl text-gray-600">
-          Inspect platform health, moderate courts and reviews, and audit bookings and payments. Every
-          administrative action is written to the audit log.
+          Inspect platform health, moderate courts and reviews, and audit bookings and payments.
+          Every administrative action is written to the audit log.
         </p>
 
         <AdminNav />

@@ -103,7 +103,10 @@ describe('notification outbox', () => {
     vi.spyOn(NotificationModel, 'find').mockReturnValue(chain([notification]) as never);
     vi.spyOn(NotificationModel, 'countDocuments').mockResolvedValue(1);
 
-    const failing = { name: 'failing', send: vi.fn().mockRejectedValue(new Error('temporary outage')) };
+    const failing = {
+      name: 'failing',
+      send: vi.fn().mockRejectedValue(new Error('temporary outage')),
+    };
 
     const result = await processNotificationOutbox(failing);
 
@@ -115,7 +118,9 @@ describe('notification outbox', () => {
 
 describe('notification inbox', () => {
   it('validates filter and pagination inputs', () => {
-    expect(listNotificationsSchema.parse({ query: { unreadOnly: 'true', limit: '5' } }).query).toMatchObject({
+    expect(
+      listNotificationsSchema.parse({ query: { unreadOnly: 'true', limit: '5' } }).query
+    ).toMatchObject({
       unreadOnly: true,
       limit: 5,
       page: 1,

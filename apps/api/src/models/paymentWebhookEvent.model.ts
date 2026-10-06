@@ -1,4 +1,4 @@
-import { type Document,model, Schema } from 'mongoose';
+import { type Document, model, Schema } from 'mongoose';
 
 export interface PaymentWebhookEventDocument extends Document {
   provider: string;

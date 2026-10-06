@@ -3,7 +3,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { bookingApi } from '../services/booking.api';
 import { paymentApi } from '../services/payment.api';
 import { queryKeys } from '../services/queryKeys';
-import type { Booking, BookingListQuery, CreateHoldInput, PaymentAttemptResult } from '../types/booking';
+import type {
+  Booking,
+  BookingListQuery,
+  CreateHoldInput,
+  PaymentAttemptResult,
+} from '../types/booking';
 
 /** The signed-in customer's bookings, with server-side filters. */
 export function useMyBookings(query: BookingListQuery = {}) {
@@ -91,8 +96,15 @@ export function useCancelBooking() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ bookingId, reason, idempotencyKey }: { bookingId: string; reason: string; idempotencyKey?: string }) =>
-      bookingApi.cancel(bookingId, { reason, idempotencyKey }),
+    mutationFn: ({
+      bookingId,
+      reason,
+      idempotencyKey,
+    }: {
+      bookingId: string;
+      reason: string;
+      idempotencyKey?: string;
+    }) => bookingApi.cancel(bookingId, { reason, idempotencyKey }),
     onSuccess: result => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.bookings.all() });
       void queryClient.invalidateQueries({ queryKey: queryKeys.venues.all() });

@@ -15,7 +15,11 @@ import type { AvailabilityInterval } from '../../types/booking';
 import { todayIso } from '../../utils/format';
 import type { BookingRequestFormValues } from '../../utils/validation';
 
-const INITIAL_VALUES: BookingRequestFormValues = { pitchId: '', date: todayIso(), durationMinutes: 60 };
+const INITIAL_VALUES: BookingRequestFormValues = {
+  pitchId: '',
+  date: todayIso(),
+  durationMinutes: 60,
+};
 
 /** Pick a court and slot. Selecting a slot stores the draft and moves to checkout. */
 export function BookingPage() {
@@ -78,7 +82,9 @@ export function BookingPage() {
         {venue.data && (
           <div className="mt-5 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
             <div className="card h-fit p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-700">Choose a slot</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-700">
+                Choose a slot
+              </p>
               <h1 className="mt-2 text-3xl font-bold text-slate-950">{venue.data.venue.name}</h1>
 
               <div className="mt-6">

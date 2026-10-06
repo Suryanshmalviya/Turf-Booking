@@ -47,9 +47,7 @@ describe('booking validation', () => {
 
   it('coerces pagination defaults and constrains status filters', () => {
     expect(listMyBookingsSchema.parse({ query: {} }).query).toMatchObject({ page: 1, limit: 20 });
-    expect(
-      listMyBookingsSchema.safeParse({ query: { status: 'archived' } }).success
-    ).toBe(false);
+    expect(listMyBookingsSchema.safeParse({ query: { status: 'archived' } }).success).toBe(false);
   });
 });
 

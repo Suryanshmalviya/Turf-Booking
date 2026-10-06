@@ -1,4 +1,4 @@
-import { lazy,Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AdminLayout } from '../components/admin/AdminLayout';
@@ -23,14 +23,30 @@ import { ProtectedRoute } from './ProtectedRoute';
  * only thing that pulls in the charting library. Loading it on demand keeps that
  * weight out of the bundle every customer downloads.
  */
-const AdminBookingsPage = lazy(() => import('../pages/admin/AdminBookingsPage').then(m => ({ default: m.AdminBookingsPage })));
-const AdminCourtsPage = lazy(() => import('../pages/admin/AdminCourtsPage').then(m => ({ default: m.AdminCourtsPage })));
-const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
-const AdminPaymentsPage = lazy(() => import('../pages/admin/AdminPaymentsPage').then(m => ({ default: m.AdminPaymentsPage })));
-const AdminReviewsPage = lazy(() => import('../pages/admin/AdminReviewsPage').then(m => ({ default: m.AdminReviewsPage })));
-const AdminReportsPage = lazy(() => import('../pages/admin/AdminReportsPage').then(m => ({ default: m.AdminReportsPage })));
-const AdminSettingsPage = lazy(() => import('../pages/admin/AdminSettingsPage').then(m => ({ default: m.AdminSettingsPage })));
-const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
+const AdminBookingsPage = lazy(() =>
+  import('../pages/admin/AdminBookingsPage').then(m => ({ default: m.AdminBookingsPage }))
+);
+const AdminCourtsPage = lazy(() =>
+  import('../pages/admin/AdminCourtsPage').then(m => ({ default: m.AdminCourtsPage }))
+);
+const AdminDashboardPage = lazy(() =>
+  import('../pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage }))
+);
+const AdminPaymentsPage = lazy(() =>
+  import('../pages/admin/AdminPaymentsPage').then(m => ({ default: m.AdminPaymentsPage }))
+);
+const AdminReviewsPage = lazy(() =>
+  import('../pages/admin/AdminReviewsPage').then(m => ({ default: m.AdminReviewsPage }))
+);
+const AdminReportsPage = lazy(() =>
+  import('../pages/admin/AdminReportsPage').then(m => ({ default: m.AdminReportsPage }))
+);
+const AdminSettingsPage = lazy(() =>
+  import('../pages/admin/AdminSettingsPage').then(m => ({ default: m.AdminSettingsPage }))
+);
+const AdminUsersPage = lazy(() =>
+  import('../pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage }))
+);
 
 /** Placeholder shown while a console section is being fetched. */
 function AdminSectionFallback() {

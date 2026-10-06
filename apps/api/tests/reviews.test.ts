@@ -25,11 +25,15 @@ describe('review validators', () => {
   it('bounds the rating to whole numbers between one and five', () => {
     const base = { body: { bookingId: new Types.ObjectId().toString(), comment: 'Great venue' } };
 
-    expect(createReviewSchema.safeParse({ ...base, body: { ...base.body, rating: 5 } }).success).toBe(true);
-    expect(createReviewSchema.safeParse({ ...base, body: { ...base.body, rating: 0 } }).success).toBe(false);
-    expect(createReviewSchema.safeParse({ ...base, body: { ...base.body, rating: 4.5 } }).success).toBe(
-      false
-    );
+    expect(
+      createReviewSchema.safeParse({ ...base, body: { ...base.body, rating: 5 } }).success
+    ).toBe(true);
+    expect(
+      createReviewSchema.safeParse({ ...base, body: { ...base.body, rating: 0 } }).success
+    ).toBe(false);
+    expect(
+      createReviewSchema.safeParse({ ...base, body: { ...base.body, rating: 4.5 } }).success
+    ).toBe(false);
   });
 
   it('requires a meaningful comment', () => {

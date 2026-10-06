@@ -16,7 +16,12 @@ router.use(authenticate());
 
 router.get('/', validate(listNotificationsSchema), notificationsController.list);
 router.get('/unread-count', notificationsController.unreadCount);
-router.post('/read-all', requireCsrf, validate(markAllReadSchema), notificationsController.markAllRead);
+router.post(
+  '/read-all',
+  requireCsrf,
+  validate(markAllReadSchema),
+  notificationsController.markAllRead
+);
 router.patch(
   '/:notificationId/read',
   requireCsrf,

@@ -63,12 +63,8 @@ describe('environment configuration', () => {
   });
 
   it('rejects a recovery window that is too long to be safe', () => {
-    expect(() =>
-      loadConfig({ ...secrets, PASSWORD_RESET_TOKEN_TTL_MINUTES: '5000' })
-    ).toThrow();
-    expect(() =>
-      loadConfig({ ...secrets, EMAIL_VERIFICATION_TOKEN_TTL_MINUTES: '1' })
-    ).toThrow();
+    expect(() => loadConfig({ ...secrets, PASSWORD_RESET_TOKEN_TTL_MINUTES: '5000' })).toThrow();
+    expect(() => loadConfig({ ...secrets, EMAIL_VERIFICATION_TOKEN_TTL_MINUTES: '1' })).toThrow();
   });
 
   it('rejects missing or short JWT secrets', () => {
@@ -76,9 +72,7 @@ describe('environment configuration', () => {
   });
 
   it('rejects insecure authentication cookies in production', () => {
-    expect(() => loadConfig({ ...secrets, NODE_ENV: 'production' })).toThrow(
-      /AUTH_COOKIE_SECURE/
-    );
+    expect(() => loadConfig({ ...secrets, NODE_ENV: 'production' })).toThrow(/AUTH_COOKIE_SECURE/);
   });
 
   it('rejects SameSite=None without secure cookies', () => {

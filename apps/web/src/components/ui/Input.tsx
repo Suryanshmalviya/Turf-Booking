@@ -28,11 +28,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       required={required}
       aria-invalid={hasError || undefined}
       aria-describedby={error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined}
-      className={cn(
-        'input',
-        hasError && 'border-red-400 focus-visible:ring-red-400',
-        className
-      )}
+      className={cn('input', hasError && 'border-red-400 focus-visible:ring-red-400', className)}
       {...rest}
     />
   );
@@ -40,7 +36,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   if (!label && !hint && !error) return control;
 
   return (
-    <Field id={fieldId} label={label} hint={hint} error={error} required={required} hideLabel={hideLabel}>
+    <Field
+      id={fieldId}
+      label={label}
+      hint={hint}
+      error={error}
+      required={required}
+      hideLabel={hideLabel}
+    >
       {control}
     </Field>
   );

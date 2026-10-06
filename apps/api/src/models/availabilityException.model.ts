@@ -1,9 +1,6 @@
 import { type Document, model, Schema, type Types } from 'mongoose';
 
-import {
-  AVAILABILITY_EXCEPTION_KINDS,
-  type AvailabilityExceptionKind,
-} from '../types/enums';
+import { AVAILABILITY_EXCEPTION_KINDS, type AvailabilityExceptionKind } from '../types/enums';
 
 export interface AvailabilityExceptionDocument extends Document {
   venueId: Types.ObjectId;

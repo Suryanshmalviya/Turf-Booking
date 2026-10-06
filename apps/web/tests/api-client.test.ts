@@ -55,7 +55,14 @@ function failure(status: number, error: unknown, headers?: Record<string, string
   return { status, body: { success: false, error }, headers };
 }
 
-const meta = { page: 1, limit: 20, total: 3, totalPages: 1, hasNextPage: false, hasPreviousPage: false };
+const meta = {
+  page: 1,
+  limit: 20,
+  total: 3,
+  totalPages: 1,
+  hasNextPage: false,
+  hasPreviousPage: false,
+};
 
 beforeEach(() => {
   resetApiClientState();
@@ -299,7 +306,9 @@ describe('silent token refresh', () => {
       failure(401, { code: 'UNAUTHORIZED', message: 'Access session expired' })
     );
 
-    await expect(request('/bookings', { method: 'POST', body: {} })).rejects.toBeInstanceOf(ApiError);
+    await expect(request('/bookings', { method: 'POST', body: {} })).rejects.toBeInstanceOf(
+      ApiError
+    );
 
     expect(calls).toHaveLength(1);
   });
@@ -340,7 +349,9 @@ describe('silent token refresh', () => {
       failure(401, { code: 'UNAUTHORIZED', message: 'Access session expired' })
     );
 
-    await expect(request('/auth/me', { retryAfterRefresh: false })).rejects.toBeInstanceOf(ApiError);
+    await expect(request('/auth/me', { retryAfterRefresh: false })).rejects.toBeInstanceOf(
+      ApiError
+    );
 
     expect(calls).toHaveLength(1);
   });

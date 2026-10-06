@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { BookingFacts, BookingNotFound, BookingSummaryCard } from '../../components/booking/BookingCard';
+import {
+  BookingFacts,
+  BookingNotFound,
+  BookingSummaryCard,
+} from '../../components/booking/BookingCard';
 import { BookingSteps } from '../../components/booking/BookingSteps';
 import { Container, PageShell } from '../../components/common/Container';
 import { Notice } from '../../components/common/Feedback';
@@ -86,7 +90,11 @@ export function BookingConfirmationPage() {
 
         {confirmed ? (
           <>
-            <h1 ref={headingRef} tabIndex={-1} className="text-3xl font-bold text-slate-950 focus:outline-none">
+            <h1
+              ref={headingRef}
+              tabIndex={-1}
+              className="text-3xl font-bold text-slate-950 focus:outline-none"
+            >
               Your court is booked
             </h1>
             <Notice variant="success" className="mt-4" title="Confirmation">
@@ -95,8 +103,8 @@ export function BookingConfirmationPage() {
           </>
         ) : (
           <Notice variant="warning" title="Not confirmed yet">
-            This booking is still {bookingStatusLabel(booking.status)}. It only becomes confirmed once payment
-            settles — reload this page in a moment.
+            This booking is still {bookingStatusLabel(booking.status)}. It only becomes confirmed
+            once payment settles — reload this page in a moment.
           </Notice>
         )}
 

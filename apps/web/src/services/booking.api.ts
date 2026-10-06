@@ -24,9 +24,12 @@ export interface CancelBookingInput {
 export const bookingApi = {
   /** The caller's own bookings, with server-side filtering and pagination. */
   async listMine(query: BookingListQuery = {}, signal?: AbortSignal): Promise<BookingListResult> {
-    const { data, meta } = await requestWithMeta<Booking[]>(`/bookings${buildQuery({ ...query })}`, {
-      signal,
-    });
+    const { data, meta } = await requestWithMeta<Booking[]>(
+      `/bookings${buildQuery({ ...query })}`,
+      {
+        signal,
+      }
+    );
 
     return {
       items: data ?? [],

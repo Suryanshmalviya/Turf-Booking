@@ -41,10 +41,13 @@ export const resetPasswordSchema = z.object({
       password: passwordSchema,
       confirmPassword: z.string().max(128).optional(),
     })
-    .refine(value => value.confirmPassword === undefined || value.confirmPassword === value.password, {
-      message: 'Password confirmation does not match',
-      path: ['confirmPassword'],
-    }),
+    .refine(
+      value => value.confirmPassword === undefined || value.confirmPassword === value.password,
+      {
+        message: 'Password confirmation does not match',
+        path: ['confirmPassword'],
+      }
+    ),
 });
 
 export const verifyEmailSchema = z.object({

@@ -7,7 +7,8 @@ import { Spinner } from './Loading';
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
   primary: 'bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500',
   secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-400',
-  outline: 'border-2 border-primary-600 text-primary-700 hover:bg-primary-50 focus-visible:ring-primary-500',
+  outline:
+    'border-2 border-primary-600 text-primary-700 hover:bg-primary-50 focus-visible:ring-primary-500',
   ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-400',
   danger: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
 };

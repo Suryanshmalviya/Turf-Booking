@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
-import {
-  AVAILABILITY_EXCEPTION_KINDS,
-  PRICING_UNITS,
-  VENUE_STATUSES,
-} from '../types/enums';
+import { AVAILABILITY_EXCEPTION_KINDS, PRICING_UNITS, VENUE_STATUSES } from '../types/enums';
 import { isIanaTimezone } from '../utils/timezone';
 import {
   currencySchema,
@@ -33,7 +29,11 @@ const imageSchema = z.object({
   key: z.string().trim().min(1).max(500),
   url: z.string().url().max(2000).optional(),
   mimeType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
-  sizeBytes: z.number().int().positive().max(10 * 1024 * 1024),
+  sizeBytes: z
+    .number()
+    .int()
+    .positive()
+    .max(10 * 1024 * 1024),
   width: z.number().int().positive().max(10000).optional(),
   height: z.number().int().positive().max(10000).optional(),
   altText: z.string().trim().max(200).optional(),

@@ -49,7 +49,9 @@ export function AdminBookingsPage({ initialReference }: AdminBookingsPageProps =
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [page, setPage] = useState(1);
-  const [reference, setReference] = useState(initialReference ?? searchParams.get('reference') ?? '');
+  const [reference, setReference] = useState(
+    initialReference ?? searchParams.get('reference') ?? ''
+  );
   const [status, setStatus] = useState(searchParams.get('status') ?? '');
   const [range, setRange] = useState({
     from: searchParams.get('from') ?? '',
@@ -95,7 +97,10 @@ export function AdminBookingsPage({ initialReference }: AdminBookingsPageProps =
           toast.success('Booking cancelled', `${booking.publicReference} is now cancelled.`);
         },
         onError: (cause: unknown) =>
-          toast.error('Cancellation failed', toErrorMessage(cause, 'The booking could not be cancelled.')),
+          toast.error(
+            'Cancellation failed',
+            toErrorMessage(cause, 'The booking could not be cancelled.')
+          ),
       }
     );
   };
@@ -105,7 +110,9 @@ export function AdminBookingsPage({ initialReference }: AdminBookingsPageProps =
       key: 'reference',
       header: 'Reference',
       render: booking => (
-        <span className="font-mono text-xs font-semibold text-slate-950">{booking.publicReference}</span>
+        <span className="font-mono text-xs font-semibold text-slate-950">
+          {booking.publicReference}
+        </span>
       ),
     },
     {
@@ -122,13 +129,19 @@ export function AdminBookingsPage({ initialReference }: AdminBookingsPageProps =
       key: 'amount',
       header: 'Amount',
       render: booking => (
-        <span className="font-medium tabular-nums">{formatMoney(booking.amountMinor, booking.currency)}</span>
+        <span className="font-medium tabular-nums">
+          {formatMoney(booking.amountMinor, booking.currency)}
+        </span>
       ),
     },
     {
       key: 'status',
       header: 'Booking',
-      render: booking => <Badge tone={BOOKING_STATUS_TONE[booking.status]}>{bookingStatusLabel(booking.status)}</Badge>,
+      render: booking => (
+        <Badge tone={BOOKING_STATUS_TONE[booking.status]}>
+          {bookingStatusLabel(booking.status)}
+        </Badge>
+      ),
     },
     {
       key: 'payment',
@@ -187,7 +200,9 @@ export function AdminBookingsPage({ initialReference }: AdminBookingsPageProps =
               },
               placeholder: 'Search reference, e.g. PB-…',
             }}
-            filters={[{ name: 'status', label: 'Status', options: STATUS_OPTIONS, hideLabel: true }]}
+            filters={[
+              { name: 'status', label: 'Status', options: STATUS_OPTIONS, hideLabel: true },
+            ]}
             values={{ status }}
             onFilterChange={(_name, value) => {
               setStatus(value);
@@ -213,8 +228,8 @@ export function AdminBookingsPage({ initialReference }: AdminBookingsPageProps =
       />
 
       <Notice variant="info">
-        Cancellation refunds follow the policy snapshot stored on the booking at the time of the hold, so
-        late cancellations may refund nothing.
+        Cancellation refunds follow the policy snapshot stored on the booking at the time of the
+        hold, so late cancellations may refund nothing.
       </Notice>
 
       <ConfirmActionDialog
@@ -224,8 +239,9 @@ export function AdminBookingsPage({ initialReference }: AdminBookingsPageProps =
           target ? (
             <>
               Booking <strong>{target.publicReference}</strong> starting{' '}
-              {formatDateTime(target.startAt)} for {formatMoney(target.amountMinor, target.currency)} will be
-              cancelled. The slot is released for other customers.
+              {formatDateTime(target.startAt)} for{' '}
+              {formatMoney(target.amountMinor, target.currency)} will be cancelled. The slot is
+              released for other customers.
             </>
           ) : undefined
         }

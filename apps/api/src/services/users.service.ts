@@ -15,7 +15,7 @@ import { ApiError } from '../utils/api-error';
 import { paginateWithMeta } from '../utils/paginate';
 import { containsRegex } from '../utils/query';
 import { parseSort, type SortWhitelist } from '../utils/sort';
-import { revokeAllSessions, type SafeUser,toSafeUser } from './auth.service';
+import { revokeAllSessions, type SafeUser, toSafeUser } from './auth.service';
 
 const USER_SORT_WHITELIST: SortWhitelist = {
   createdAt: 1,

@@ -29,7 +29,10 @@ describe('pagination helpers', () => {
   });
 
   it('exposes legacy flat pagination fields alongside meta', () => {
-    const page = withLegacyPagination({ items: [1, 2], meta: paginationMeta({ page: 1, limit: 2, total: 5 }) });
+    const page = withLegacyPagination({
+      items: [1, 2],
+      meta: paginationMeta({ page: 1, limit: 2, total: 5 }),
+    });
 
     expect(page).toMatchObject({ page: 1, limit: 2, total: 5 });
     expect(page.meta.totalPages).toBe(3);
@@ -70,19 +73,27 @@ describe('query helpers', () => {
 describe('idempotency key extraction', () => {
   it('prefers the header and falls back to the body field', () => {
     expect(
-      requireIdempotencyKey({ header: () => 'header-key', body: { idempotencyKey: 'body-key' } } as never)
+      requireIdempotencyKey({
+        header: () => 'header-key',
+        body: { idempotencyKey: 'body-key' },
+      } as never)
     ).toBe('header-key');
 
-    expect(requireIdempotencyKey({ header: () => undefined, body: { idempotencyKey: 'body-key' } } as never)).toBe(
-      'body-key'
-    );
+    expect(
+      requireIdempotencyKey({
+        header: () => undefined,
+        body: { idempotencyKey: 'body-key' },
+      } as never)
+    ).toBe('body-key');
   });
 
   it('rejects a missing or blank key', () => {
     expect(() => requireIdempotencyKey({ header: () => undefined, body: {} } as never)).toThrow(
       'Idempotency-Key header is required'
     );
-    expect(() => requireIdempotencyKey({ header: () => '  ', body: {} } as never)).toThrow(ApiError);
+    expect(() => requireIdempotencyKey({ header: () => '  ', body: {} } as never)).toThrow(
+      ApiError
+    );
   });
 });
 
@@ -108,7 +119,11 @@ describe('response envelope builder', () => {
     sendSuccess(response as never, { id: '1' });
 
     expect(response.sent.status).toBe(200);
-    expect(response.sent.body).toEqual({ success: true, data: { id: '1' }, requestId: 'request-1' });
+    expect(response.sent.body).toEqual({
+      success: true,
+      data: { id: '1' },
+      requestId: 'request-1',
+    });
   });
 
   it('attaches pagination meta and honours the created status', () => {
@@ -130,7 +145,11 @@ describe('validation middleware', () => {
   const runValidate = (schema: Parameters<typeof validate>[0], request: unknown) =>
     new Promise<{ error?: unknown; request?: Record<string, unknown> }>(resolve => {
       const handler = validate(schema);
-      const req = request as { body: unknown; query: Record<string, unknown>; params: Record<string, unknown> };
+      const req = request as {
+        body: unknown;
+        query: Record<string, unknown>;
+        params: Record<string, unknown>;
+      };
       handler(
         req as never,
         {} as never,

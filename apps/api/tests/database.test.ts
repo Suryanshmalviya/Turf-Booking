@@ -21,7 +21,11 @@ describe('database connection management', () => {
 
     expect(connect).toHaveBeenCalledWith(
       'mongodb://localhost:27017/pickleball_booking',
-      expect.objectContaining({ maxPoolSize: 10, serverSelectionTimeoutMS: 5000, socketTimeoutMS: 45000 })
+      expect.objectContaining({
+        maxPoolSize: 10,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+      })
     );
     await disconnectDatabase();
   });

@@ -43,7 +43,11 @@ export function RootLayout() {
         <Container size="wide">
           <div className="flex h-16 items-center justify-between">
             <Link to={ROUTES.home} className="flex items-center gap-3">
-              <img src="/logo.png" alt="" className="h-9 w-auto rounded-lg object-contain shadow-sm" />
+              <img
+                src="/logo.png"
+                alt=""
+                className="h-9 w-auto rounded-lg object-contain shadow-sm"
+              />
               <span className="text-lg font-bold text-gray-900">Pickleball Booking</span>
             </Link>
 
@@ -53,7 +57,9 @@ export function RootLayout() {
                   key={link.to}
                   to={link.to}
                   className={({ isActive }) =>
-                    isActive ? 'text-primary-700 font-semibold' : 'font-medium text-gray-600 hover:text-gray-900'
+                    isActive
+                      ? 'text-primary-700 font-semibold'
+                      : 'font-medium text-gray-600 hover:text-gray-900'
                   }
                 >
                   {link.label}
@@ -83,7 +89,10 @@ export function RootLayout() {
         </Container>
 
         {menuOpen && (
-          <div id="mobile-navigation" className="border-t border-gray-100 bg-white shadow-lg md:hidden">
+          <div
+            id="mobile-navigation"
+            className="border-t border-gray-100 bg-white shadow-lg md:hidden"
+          >
             <Container size="wide" className="space-y-2 py-4">
               {NAV_LINKS.map(link => (
                 <NavLink
@@ -173,11 +182,17 @@ function MobileAccountActions({ displayName, isAdmin, onLogout }: AccountActions
       <div className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm">
         <span className="truncate font-medium text-slate-700">{displayName}</span>
       </div>
-      <Link to={ROUTES.bookings} className="rounded-lg px-3 py-2 text-base font-medium text-gray-700">
+      <Link
+        to={ROUTES.bookings}
+        className="rounded-lg px-3 py-2 text-base font-medium text-gray-700"
+      >
         My bookings
       </Link>
       {isAdmin && (
-        <Link to={ROUTES.admin} className="rounded-lg px-3 py-2 text-base font-semibold text-amber-600">
+        <Link
+          to={ROUTES.admin}
+          className="rounded-lg px-3 py-2 text-base font-semibold text-amber-600"
+        >
           Admin panel
         </Link>
       )}

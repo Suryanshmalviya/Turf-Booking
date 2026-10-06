@@ -10,7 +10,7 @@ import { useModerateReview, useReviews } from '../../hooks/useReviews';
 import { useToast } from '../../hooks/useToast';
 import type { Review, ReviewStatus } from '../../services/review.api';
 import { REVIEW_STATUSES } from '../../services/review.api';
-import { humanize,REVIEW_STATUS_TONE } from '../../types/admin';
+import { humanize, REVIEW_STATUS_TONE } from '../../types/admin';
 import type { TableColumn } from '../../types/ui';
 import { toErrorMessage } from '../../utils/error';
 import { formatDateTime, formatRelative } from '../../utils/format';
@@ -22,7 +22,10 @@ const STATUS_OPTIONS = [
 
 const RATING_OPTIONS = [
   { value: '', label: 'Any rating' },
-  ...[5, 4, 3, 2, 1].map(value => ({ value: String(value), label: `${value} star${value === 1 ? '' : 's'}` })),
+  ...[5, 4, 3, 2, 1].map(value => ({
+    value: String(value),
+    label: `${value} star${value === 1 ? '' : 's'}`,
+  })),
 ];
 
 const MODERATION_COPY: Record<ReviewStatus, { title: string; confirm: string }> = {
@@ -72,7 +75,10 @@ export function AdminReviewsPage() {
           toast.success('Review updated', `Review is now ${humanize(next)}.`);
         },
         onError: (cause: unknown) =>
-          toast.error('Moderation failed', toErrorMessage(cause, 'The review could not be updated.')),
+          toast.error(
+            'Moderation failed',
+            toErrorMessage(cause, 'The review could not be updated.')
+          ),
       }
     );
   };
@@ -92,7 +98,10 @@ export function AdminReviewsPage() {
       key: 'rating',
       header: 'Rating',
       render: review => (
-        <span className="font-semibold text-slate-950 tabular-nums" aria-label={`${review.rating} out of 5`}>
+        <span
+          className="font-semibold text-slate-950 tabular-nums"
+          aria-label={`${review.rating} out of 5`}
+        >
           {review.rating} / 5
         </span>
       ),
@@ -180,8 +189,8 @@ export function AdminReviewsPage() {
       />
 
       <Notice variant="info">
-        Only published reviews appear on the public courts page. Rejecting one hides it without deleting the
-        author's text.
+        Only published reviews appear on the public courts page. Rejecting one hides it without
+        deleting the author's text.
       </Notice>
 
       <ConfirmActionDialog

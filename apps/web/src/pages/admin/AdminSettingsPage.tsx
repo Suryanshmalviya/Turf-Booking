@@ -37,7 +37,10 @@ export function AdminSettingsPage() {
     setConfirming(null);
     seed.mutate(undefined, {
       onSuccess: result =>
-        toast.success('Demo data seeded', `Stored ${formatCount(result.seededCount)} sample courts.`),
+        toast.success(
+          'Demo data seeded',
+          `Stored ${formatCount(result.seededCount)} sample courts.`
+        ),
       onError: (cause: unknown) => toast.error('Seeding failed', toErrorMessage(cause)),
     });
   };
@@ -60,7 +63,11 @@ export function AdminSettingsPage() {
           title="Database"
           description="Live connection health and document counts."
           actions={
-            <Button variant="secondary" onClick={() => void database.refetch()} loading={database.isFetching}>
+            <Button
+              variant="secondary"
+              onClick={() => void database.refetch()}
+              loading={database.isFetching}
+            >
               Refresh
             </Button>
           }
@@ -86,11 +93,9 @@ export function AdminSettingsPage() {
               value: database.data ? formatDateTime(database.data.checkedAt) : '—',
             },
             ...(database.data
-              ? (
-                  Object.entries(database.data.counts) as Array<
-                    [string, number | undefined]
-                  >
-                ).map(([collection, count]) => ({ label: collection, value: formatCount(count ?? 0) }))
+              ? (Object.entries(database.data.counts) as Array<[string, number | undefined]>).map(
+                  ([collection, count]) => ({ label: collection, value: formatCount(count ?? 0) })
+                )
               : []),
           ]}
         />
@@ -132,9 +137,15 @@ export function AdminSettingsPage() {
             <caption className="sr-only">Server-side settings and where they come from</caption>
             <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
               <tr>
-                <th scope="col" className="px-4 py-3 font-semibold">Setting</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Source</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Effect</th>
+                <th scope="col" className="px-4 py-3 font-semibold">
+                  Setting
+                </th>
+                <th scope="col" className="px-4 py-3 font-semibold">
+                  Source
+                </th>
+                <th scope="col" className="px-4 py-3 font-semibold">
+                  Effect
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -154,8 +165,8 @@ export function AdminSettingsPage() {
         </div>
 
         <Notice variant="info" className="mt-5">
-          These values are not editable from the console. Doing so would imply a persistence layer the API
-          does not have, and a form that appeared to save would be worse than none.
+          These values are not editable from the console. Doing so would imply a persistence layer
+          the API does not have, and a form that appeared to save would be worse than none.
         </Notice>
       </Card>
 
@@ -235,7 +246,8 @@ const SERVER_SETTINGS: ServerSetting[] = [
   {
     name: 'PAYMENT_PROVIDER',
     source: 'Environment',
-    effect: 'Which payment adapter is used. Without one, attempts stay in the development mock and never settle.',
+    effect:
+      'Which payment adapter is used. Without one, attempts stay in the development mock and never settle.',
   },
   {
     name: 'CORS_ORIGINS',

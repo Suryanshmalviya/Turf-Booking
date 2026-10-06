@@ -30,10 +30,14 @@ export function PitchCard({
     <Card className="flex flex-col">
       <div className="flex items-start justify-between gap-3">
         <h3 className="font-semibold text-slate-950">{pitch.name}</h3>
-        <Badge tone={pitch.indoor ? 'info' : 'success'}>{pitch.indoor ? 'Indoor' : 'Outdoor'}</Badge>
+        <Badge tone={pitch.indoor ? 'info' : 'success'}>
+          {pitch.indoor ? 'Indoor' : 'Outdoor'}
+        </Badge>
       </div>
       {pitch.surface && <p className="mt-1 text-sm text-gray-500">{pitch.surface}</p>}
-      {pitch.description && <p className="mt-3 flex-1 text-sm text-gray-600">{pitch.description}</p>}
+      {pitch.description && (
+        <p className="mt-3 flex-1 text-sm text-gray-600">{pitch.description}</p>
+      )}
       <Link
         to={ROUTES.venueBooking(venueId, pitch._id)}
         className="btn-outline mt-4 self-start text-xs"
@@ -59,7 +63,9 @@ export function CourtCard({
         <Badge tone="success">{statusLabel}</Badge>
       </div>
       <div className="p-5">
-        <h2 className="text-xl font-semibold text-slate-950 group-hover:text-primary-700">{name}</h2>
+        <h2 className="text-xl font-semibold text-slate-950 group-hover:text-primary-700">
+          {name}
+        </h2>
         {meta && <p className="mt-2 text-sm text-gray-500">{meta}</p>}
         <p className="mt-4 text-gray-600">{description ?? 'A ready-to-play pickleball venue.'}</p>
       </div>

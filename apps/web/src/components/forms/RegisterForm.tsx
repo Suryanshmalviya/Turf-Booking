@@ -42,7 +42,14 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       <FormError message={submitError} />
 
       <FormField form={form} name="displayName" label="Full name">
-        {field => <Input placeholder="John Doe" autoComplete="name" {...field} {...form.register('displayName')} />}
+        {field => (
+          <Input
+            placeholder="John Doe"
+            autoComplete="name"
+            {...field}
+            {...form.register('displayName')}
+          />
+        )}
       </FormField>
 
       <FormField form={form} name="email" label="Email address">

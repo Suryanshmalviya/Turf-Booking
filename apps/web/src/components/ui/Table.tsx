@@ -34,7 +34,11 @@ export function Table<TRow>({
         <thead className="bg-gray-50 text-gray-600">
           <tr>
             {columns.map(column => (
-              <th key={column.key} scope="col" className={cn('p-4 font-semibold', column.className)}>
+              <th
+                key={column.key}
+                scope="col"
+                className={cn('p-4 font-semibold', column.className)}
+              >
                 {column.header}
               </th>
             ))}
@@ -44,7 +48,10 @@ export function Table<TRow>({
           {rows.map((row, index) => (
             <tr key={rowKey(row, index)} className="border-t border-gray-100 hover:bg-gray-50/60">
               {columns.map(column => (
-                <td key={column.key} className={cn('p-4 align-middle text-gray-700', column.className)}>
+                <td
+                  key={column.key}
+                  className={cn('p-4 align-middle text-gray-700', column.className)}
+                >
                   {column.render(row, index)}
                 </td>
               ))}

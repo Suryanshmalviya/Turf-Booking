@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 
 import { useVenueFilterStore } from '../../store/venueFilter.store';
 import { PITCH_FEATURE_OPTIONS } from '../../types/court';
-import { type VenueSearchFormValues,venueSearchSchema } from '../../utils/validation';
+import { type VenueSearchFormValues, venueSearchSchema } from '../../utils/validation';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
@@ -40,7 +40,10 @@ export function VenueSearchForm() {
         {field => (
           <Select
             placeholder="Any pitch"
-            options={PITCH_FEATURE_OPTIONS.map(option => ({ value: option.value, label: option.label }))}
+            options={PITCH_FEATURE_OPTIONS.map(option => ({
+              value: option.value,
+              label: option.label,
+            }))}
             {...field}
             {...form.register('feature')}
           />
@@ -57,7 +60,14 @@ export function VenueSearchForm() {
 
       <FormField form={form} name="maxPrice" label="Maximum price" hideLabel>
         {field => (
-          <Input type="number" min="0" step="any" placeholder="Max price" {...field} {...form.register('maxPrice')} />
+          <Input
+            type="number"
+            min="0"
+            step="any"
+            placeholder="Max price"
+            {...field}
+            {...form.register('maxPrice')}
+          />
         )}
       </FormField>
 

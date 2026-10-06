@@ -83,8 +83,8 @@ export function CheckoutPage() {
       });
   }, [draft, idempotencyKey, startHold]);
 
-// ---- poll until the provider confirms or the hold lapses
-useEffect(() => {
+  // ---- poll until the provider confirms or the hold lapses
+  useEffect(() => {
     if (!holdId || !serverBooking) return;
     if (serverBooking.status === 'confirmed') {
       setPaymentState('confirmed');
@@ -107,10 +107,13 @@ useEffect(() => {
         setPaymentState('confirmed');
         navigate(ROUTES.confirmation(holdId), { replace: true });
       })
-      .catch((cause: unknown) => setError(toErrorMessage(cause, 'We could not confirm this booking yet.')));
+      .catch((cause: unknown) =>
+        setError(toErrorMessage(cause, 'We could not confirm this booking yet.'))
+      );
   }, [paymentState, holdId, confirmHold, navigate]);
 
-  const amountMinor = serverBooking?.amountMinor ?? hold?.amountMinor ?? draft?.interval.priceMinor ?? 0;
+  const amountMinor =
+    serverBooking?.amountMinor ?? hold?.amountMinor ?? draft?.interval.priceMinor ?? 0;
   const currency = serverBooking?.currency ?? hold?.currency ?? draft?.interval.currency ?? 'USD';
 
   // Once the hold lapses there is no payment left to describe, so the mock

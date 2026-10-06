@@ -31,7 +31,13 @@ const detail = {
     _id: 'venue-id',
     name: 'Court House',
     timezone: 'Asia/Kolkata',
-    address: { line1: '1 Main St', city: 'Pune', region: 'MH', postalCode: '411001', country: 'IN' },
+    address: {
+      line1: '1 Main St',
+      city: 'Pune',
+      region: 'MH',
+      postalCode: '411001',
+      country: 'IN',
+    },
   },
   pitches: [{ _id: 'pitch-id', name: 'Court 1', indoor: true, isActive: true }],
 };

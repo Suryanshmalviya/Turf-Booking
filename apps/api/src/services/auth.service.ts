@@ -5,11 +5,7 @@ import jwt, { type SignOptions } from 'jsonwebtoken';
 
 import { config, logger } from '../config';
 import { AuthSessionModel, type UserDocument, UserModel } from '../models/auth.model';
-import type {
-  AuthResult,
-  RefreshTokenPayload,
-  SessionMetadata,
-} from '../types/auth';
+import type { AuthResult, RefreshTokenPayload, SessionMetadata } from '../types/auth';
 import { DEFAULT_USER_ROLE } from '../types/enums';
 import { ApiError } from '../utils/api-error';
 import {
@@ -17,7 +13,12 @@ import {
   sendPasswordResetMail,
   sendVerificationMail,
 } from './auth-mail.service';
-import { consumeAuthToken, issueAuthToken, peekAuthToken, revokeUserAuthTokens } from './auth-token.service';
+import {
+  consumeAuthToken,
+  issueAuthToken,
+  peekAuthToken,
+  revokeUserAuthTokens,
+} from './auth-token.service';
 
 export type SafeUser = AuthResult['user'];
 
@@ -120,7 +121,11 @@ export async function registerUser(
   logger.info({ userId: user._id }, 'User registered');
 
   if (mustVerifyEmail) {
-    const { token } = await issueAuthToken({ id: user._id.toString() }, 'email_verification', metadata);
+    const { token } = await issueAuthToken(
+      { id: user._id.toString() },
+      'email_verification',
+      metadata
+    );
     await sendVerificationMail(project(user), token);
   }
 
@@ -226,7 +231,10 @@ export async function requestPasswordReset(
   );
 
   if (!user) {
-    logger.info({ email: maskEmail(normalisedEmail) }, 'Password reset requested for unknown account');
+    logger.info(
+      { email: maskEmail(normalisedEmail) },
+      'Password reset requested for unknown account'
+    );
     return;
   }
 
@@ -240,9 +248,10 @@ export async function requestPasswordReset(
  * Redeems a recovery link. Every live session is revoked afterwards, so a stolen
  * device cannot keep its access once the real owner recovers the account.
  */
-export async function resetPasswordWithToken(
-  input: { token: string; password: string }
-): Promise<{ revokedSessions: number }> {
+export async function resetPasswordWithToken(input: {
+  token: string;
+  password: string;
+}): Promise<{ revokedSessions: number }> {
   // Validate the new password before redeeming the link: a rejected choice must
   // not cost the user their recovery link.
   const candidateId = await peekAuthToken(input.token, 'password_reset');

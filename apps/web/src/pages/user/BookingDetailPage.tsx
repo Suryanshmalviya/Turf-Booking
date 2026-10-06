@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { BookingFacts, BookingNotFound, BookingSummaryCard } from '../../components/booking/BookingCard';
+import {
+  BookingFacts,
+  BookingNotFound,
+  BookingSummaryCard,
+} from '../../components/booking/BookingCard';
 import { BookingSteps } from '../../components/booking/BookingSteps';
 import { CancelBookingDialog } from '../../components/booking/CancelBookingDialog';
 import { PolicyNotice } from '../../components/booking/PriceBreakdown';
@@ -47,9 +51,14 @@ export function BookingDetailPage() {
       {
         onSuccess: ({ booking: cancelled }) => {
           setConfirmCancel(false);
-          toast.push({ variant: 'success', title: 'Booking cancelled', description: cancelled.publicReference });
+          toast.push({
+            variant: 'success',
+            title: 'Booking cancelled',
+            description: cancelled.publicReference,
+          });
         },
-        onError: (cause: unknown) => setActionError(toErrorMessage(cause, 'We could not cancel this booking.')),
+        onError: (cause: unknown) =>
+          setActionError(toErrorMessage(cause, 'We could not cancel this booking.')),
       }
     );
   };
@@ -97,8 +106,8 @@ export function BookingDetailPage() {
 
             {booking.status === 'held' && (
               <Notice variant="warning" title="Payment is not complete">
-                This slot is only held until the deadline. It becomes a confirmed booking once payment
-                settles.
+                This slot is only held until the deadline. It becomes a confirmed booking once
+                payment settles.
               </Notice>
             )}
 
@@ -127,7 +136,8 @@ export function BookingDetailPage() {
               </div>
               {!mutable && (
                 <p className="mt-3 text-sm text-gray-500">
-                  Cancelling and rescheduling are only available for active bookings that have not started.
+                  Cancelling and rescheduling are only available for active bookings that have not
+                  started.
                 </p>
               )}
             </Card>

@@ -2,7 +2,7 @@ import mongoose, { type FilterQuery, Types } from 'mongoose';
 
 import { logger } from '../config';
 import { AuditLogModel } from '../models/admin.model';
-import { type BookingDocument,BookingModel } from '../models/bookings.model';
+import { type BookingDocument, BookingModel } from '../models/bookings.model';
 import {
   AvailabilityRuleModel,
   PitchModel,
@@ -13,11 +13,7 @@ import {
 import { NotificationModel } from '../models/notifications.model';
 import { PaymentAttemptModel, RefundModel } from '../models/payments.model';
 import { ReviewModel } from '../models/reviews.model';
-import {
-  AuthSessionModel,
-  type UserDocument,
-  UserModel,
-} from '../models/users.model';
+import { AuthSessionModel, type UserDocument, UserModel } from '../models/users.model';
 import type { UserRole, UserStatus, VenueStatus } from '../types/enums';
 import type { SortSpec } from '../types/pagination';
 import { ApiError } from '../utils/api-error';
@@ -128,7 +124,9 @@ export async function bookingPaymentView(bookingId: string) {
       .sort({ createdAt: -1 })
       .lean(),
     RefundModel.find({ bookingId })
-      .select('status amountMinor currency reason failureReason providerRefundId createdAt updatedAt')
+      .select(
+        'status amountMinor currency reason failureReason providerRefundId createdAt updatedAt'
+      )
       .sort({ createdAt: -1 })
       .lean(),
     AuditLogModel.find({ resourceType: 'Booking', resourceId: bookingId })
@@ -158,7 +156,10 @@ export async function operationalReport(input: { from: Date; to: Date }) {
 
   const [bookingCounts, cancellationCount, gross, refunds, utilization, reviewTotals] =
     await Promise.all([
-      BookingModel.aggregate([{ $match: range }, { $group: { _id: '$status', count: { $sum: 1 } } }]),
+      BookingModel.aggregate([
+        { $match: range },
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+      ]),
       BookingModel.countDocuments({ ...range, status: 'cancelled' }),
       BookingModel.aggregate([
         { $match: { ...range, status: { $in: ['confirmed', 'completed'] } } },
@@ -188,7 +189,7 @@ export async function operationalReport(input: { from: Date; to: Date }) {
         { $match: { status: 'published' } },
         { $group: { _id: '$venueId', average: { $avg: '$rating' }, count: { $sum: 1 } } },
       ]),
-  ]);
+    ]);
 
   return {
     definitions: {
@@ -196,7 +197,8 @@ export async function operationalReport(input: { from: Date; to: Date }) {
       utilization:
         'Booked minutes grouped by venue; the denominator requires configured operating minutes and is not inferred here.',
       cancellations: 'Bookings with status cancelled whose startAt falls in [from,to).',
-      grossBookingValue: 'Sum of amountMinor for confirmed or completed bookings grouped by currency.',
+      grossBookingValue:
+        'Sum of amountMinor for confirmed or completed bookings grouped by currency.',
       refunds: 'Succeeded refund amountMinor grouped by currency.',
       reviewAverages: 'Average published review rating grouped by venue.',
     },
@@ -211,7 +213,9 @@ export async function operationalReport(input: { from: Date; to: Date }) {
 
 export async function exportBookings(input: { from: Date; to: Date }) {
   return BookingModel.find({ startAt: { $gte: input.from, $lt: input.to } })
-    .select('publicReference venueId pitchId startAt endAt status paymentStatus amountMinor currency')
+    .select(
+      'publicReference venueId pitchId startAt endAt status paymentStatus amountMinor currency'
+    )
     .lean();
 }
 
@@ -306,7 +310,11 @@ const DEFAULT_IMAGE_URL =
  * Creates a fully operational venue (venue + court + opening hours + pricing) in
  * one administrator action so the seeded court is immediately bookable.
  */
-export async function createVenueWithCourt(actorId: string, input: AdminVenueInput, requestId?: string) {
+export async function createVenueWithCourt(
+  actorId: string,
+  input: AdminVenueInput,
+  requestId?: string
+) {
   const ownerId = new Types.ObjectId(actorId);
   const currency = (input.currency || 'INR').toUpperCase();
   const timezone = input.timezone || 'Asia/Kolkata';

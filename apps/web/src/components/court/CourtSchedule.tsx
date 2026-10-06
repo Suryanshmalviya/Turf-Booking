@@ -22,7 +22,9 @@ export function CourtSchedule({ schedule }: CourtScheduleProps) {
               <span className="text-right font-medium text-slate-900">
                 {rules.length > 0
                   ? rules
-                      .map(rule => `${formatMinute(rule.startMinute)}–${formatMinute(rule.endMinute)}`)
+                      .map(
+                        rule => `${formatMinute(rule.startMinute)}–${formatMinute(rule.endMinute)}`
+                      )
                       .join(', ')
                   : 'Closed'}
               </span>

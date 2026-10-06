@@ -39,10 +39,7 @@ const recentMails: AuthMail[] = [];
 const transports = new Map<AuthMailKind, AuthMailTransport>();
 
 /** Registers the transport used for one kind of authentication email. */
-export function registerAuthMailTransport(
-  kind: AuthMailKind,
-  transport: AuthMailTransport
-): void {
+export function registerAuthMailTransport(kind: AuthMailKind, transport: AuthMailTransport): void {
   transports.set(kind, transport);
 }
 

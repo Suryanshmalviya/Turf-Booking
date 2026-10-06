@@ -21,6 +21,12 @@ router.post(
   paymentsController.createAttempt
 );
 
-router.post('/reconcile', authenticate(), authorize('admin'), requireCsrf, paymentsController.reconcile);
+router.post(
+  '/reconcile',
+  authenticate(),
+  authorize('admin'),
+  requireCsrf,
+  paymentsController.reconcile
+);
 
 export default router;

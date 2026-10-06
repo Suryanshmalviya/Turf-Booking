@@ -16,9 +16,7 @@ interface NormalisedError {
 
 /** Terminal 404 handler for requests that matched no route. */
 export function notFoundHandler(request: Request, _response: Response, next: NextFunction): void {
-  next(
-    new ApiError(404, 'NOT_FOUND', `Route ${request.method} ${request.originalUrl} not found`)
-  );
+  next(new ApiError(404, 'NOT_FOUND', `Route ${request.method} ${request.originalUrl} not found`));
 }
 
 interface DuplicateKeyError {
@@ -46,7 +44,11 @@ function normalise(error: unknown): NormalisedError {
   if (error instanceof ApiError) {
     return {
       status: error.statusCode,
-      body: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) },
+      body: {
+        code: error.code,
+        message: error.message,
+        ...(error.details ? { details: error.details } : {}),
+      },
       logLevel: error.statusCode >= 500 ? 'error' : 'warn',
     };
   }
@@ -64,11 +66,19 @@ function normalise(error: unknown): NormalisedError {
   }
 
   if (error instanceof jwt.TokenExpiredError) {
-    return { status: 401, body: { code: 'TOKEN_EXPIRED', message: 'Access session expired' }, logLevel: 'warn' };
+    return {
+      status: 401,
+      body: { code: 'TOKEN_EXPIRED', message: 'Access session expired' },
+      logLevel: 'warn',
+    };
   }
 
   if (error instanceof jwt.JsonWebTokenError) {
-    return { status: 401, body: { code: 'UNAUTHORIZED', message: 'Invalid authentication session' }, logLevel: 'warn' };
+    return {
+      status: 401,
+      body: { code: 'UNAUTHORIZED', message: 'Invalid authentication session' },
+      logLevel: 'warn',
+    };
   }
 
   if (error instanceof MongooseError.ValidationError) {
@@ -115,15 +125,13 @@ function normalise(error: unknown): NormalisedError {
     };
   }
 
-  const message =
-    error instanceof Error ? error.message : 'An unexpected error occurred';
+  const message = error instanceof Error ? error.message : 'An unexpected error occurred';
 
   return {
     status: 500,
     body: {
       code: 'INTERNAL_ERROR',
-      message:
-        config.nodeEnv === 'production' ? 'An unexpected error occurred' : message,
+      message: config.nodeEnv === 'production' ? 'An unexpected error occurred' : message,
     },
     logLevel: 'error',
   };

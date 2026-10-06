@@ -30,7 +30,10 @@ ENV NODE_ENV=production \
 
 # `dumb-init` gives Node a real PID 1 so SIGTERM reaches the process and the
 # graceful shutdown handlers can close the HTTP server and the Mongo connection.
-RUN apk add --no-cache dumb-init=1.2.5-r2
+# Deliberately not version-pinned: the available Alpine revision floats with the
+# base image, and pinning a specific `=X.Y.Z-rN` breaks the build whenever the
+# repository bumps it (this happened with `=1.2.5-r2`).
+RUN apk add --no-cache dumb-init
 
 # ─── prod-deps ───────────────────────────────────────────────────────────────
 # Only manifests are copied so this layer is reused when source changes.

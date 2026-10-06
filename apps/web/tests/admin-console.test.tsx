@@ -81,7 +81,9 @@ describe('admin booking administration', () => {
     const confirm = await screen.findByRole('button', { name: 'Cancel booking' }, READY);
     expect(confirm).toBeDisabled();
 
-    fireEvent.change(screen.getByLabelText(/cancellation reason/i), { target: { value: 'Court resurfacing' } });
+    fireEvent.change(screen.getByLabelText(/cancellation reason/i), {
+      target: { value: 'Court resurfacing' },
+    });
     expect(confirm).toBeEnabled();
 
     fireEvent.click(confirm);
@@ -98,7 +100,9 @@ describe('admin booking administration', () => {
 
     fireEvent.click(await screen.findByRole('button', { name: 'Cancel' }, READY));
 
-    expect(await screen.findByText(/policy snapshot stored on the booking/i, undefined, READY)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/policy snapshot stored on the booking/i, undefined, READY)
+    ).toBeInTheDocument();
   });
 });
 
@@ -109,7 +113,13 @@ describe('admin payment reporting', () => {
     adminApi.bookingPayments.mockResolvedValue({
       payments: [{ _id: 'p1', status: 'paid', amountMinor: 120000, currency: 'INR' }],
       refunds: [
-        { _id: 'r1', status: 'succeeded', amountMinor: 120000, currency: 'INR', reason: 'Late cancellation' },
+        {
+          _id: 'r1',
+          status: 'succeeded',
+          amountMinor: 120000,
+          currency: 'INR',
+          reason: 'Late cancellation',
+        },
       ],
       audit: [{ _id: 'a1', action: 'booking.cancelled', createdAt: '2026-09-23T09:00:00.000Z' }],
     });
@@ -121,7 +131,9 @@ describe('admin payment reporting', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Payment detail' }, READY));
 
     expect(await screen.findByText(/refunded successfully/i, undefined, READY)).toBeInTheDocument();
-    expect(screen.getByText(/reports the outcome rather than issuing refunds/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/reports the outcome rather than issuing refunds/i)
+    ).toBeInTheDocument();
     // No backend endpoint issues refunds, so the view must not imply one exists.
     expect(screen.queryByRole('button', { name: /refund/i })).not.toBeInTheDocument();
   });
@@ -167,8 +179,12 @@ describe('admin reporting', () => {
 
     // The server does not join configured operating minutes, so the view must not
     // present a utilisation percentage it cannot derive.
-    expect(await screen.findByText(/hours rather than a percentage/i, undefined, READY)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/hours rather than a percentage/i, undefined, READY)
+    ).toBeInTheDocument();
     // The server's own definition is surfaced rather than paraphrased away.
-    expect(await screen.findByText(/denominator is not inferred/i, undefined, READY)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/denominator is not inferred/i, undefined, READY)
+    ).toBeInTheDocument();
   });
 });

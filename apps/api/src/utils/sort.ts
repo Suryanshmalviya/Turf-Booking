@@ -23,10 +23,7 @@ export function parseSort(
     const descending = trimmed.startsWith('-');
     const field = descending ? trimmed.slice(1) : trimmed;
     if (!Object.prototype.hasOwnProperty.call(whitelist, field)) {
-      throw ApiError.badRequest(
-        `sort field "${field}" is not supported`,
-        Object.keys(whitelist)
-      );
+      throw ApiError.badRequest(`sort field "${field}" is not supported`, Object.keys(whitelist));
     }
     spec[field] = descending ? -1 : 1;
   }

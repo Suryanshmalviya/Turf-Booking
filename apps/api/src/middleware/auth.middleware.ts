@@ -46,7 +46,8 @@ function verifyAccessToken(token: string): JwtPayload {
     return payload as JwtPayload;
   } catch (error) {
     if (error instanceof ApiError) throw error;
-    if (error instanceof jwt.TokenExpiredError) throw ApiError.unauthorized('Access session expired');
+    if (error instanceof jwt.TokenExpiredError)
+      throw ApiError.unauthorized('Access session expired');
     throw ApiError.unauthorized('Invalid authentication session');
   }
 }

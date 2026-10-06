@@ -108,7 +108,9 @@ describe('Table', () => {
 
 describe('EmptyState and ErrorState', () => {
   it('renders empty state copy and action', () => {
-    render(<EmptyState title="No venues" description="Try again later" action={<button>Retry</button>} />);
+    render(
+      <EmptyState title="No venues" description="Try again later" action={<button>Retry</button>} />
+    );
 
     expect(screen.getByText('No venues')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();

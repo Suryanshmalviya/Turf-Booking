@@ -1,4 +1,4 @@
-import { type ToastApi,toastApi } from '../context/toastApi';
+import { type ToastApi, toastApi } from '../context/toastApi';
 
 /**
  * Raise transient notifications. The API is module-level so it can be called

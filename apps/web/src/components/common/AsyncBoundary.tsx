@@ -63,7 +63,12 @@ export function AsyncBoundary({
   }
 
   if (query.isPending) {
-    return <Loading {...(loadingMessage ? { message: loadingMessage } : {})} fullHeight={loadingFullHeight} />;
+    return (
+      <Loading
+        {...(loadingMessage ? { message: loadingMessage } : {})}
+        fullHeight={loadingFullHeight}
+      />
+    );
   }
 
   if (empty && isEmpty?.(query.data)) {

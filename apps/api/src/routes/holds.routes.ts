@@ -15,6 +15,11 @@ const router = Router();
 router.use(authenticate(), authorize('customer'));
 
 router.post('/', requireCsrf, validate(createHoldSchema), bookingsController.createHold);
-router.post('/:bookingId/confirm', requireCsrf, validate(bookingIdParamsSchema), bookingsController.confirmHold);
+router.post(
+  '/:bookingId/confirm',
+  requireCsrf,
+  validate(bookingIdParamsSchema),
+  bookingsController.confirmHold
+);
 
 export default router;

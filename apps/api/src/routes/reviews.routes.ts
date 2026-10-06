@@ -38,7 +38,13 @@ router.patch(
   validate(updateReviewSchema),
   reviewsController.update
 );
-router.delete('/:reviewId', authenticate(), requireCsrf, validate(reviewIdParamsSchema), reviewsController.remove);
+router.delete(
+  '/:reviewId',
+  authenticate(),
+  requireCsrf,
+  validate(reviewIdParamsSchema),
+  reviewsController.remove
+);
 
 router.post(
   '/:reviewId/replies',

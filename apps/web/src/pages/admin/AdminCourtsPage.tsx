@@ -29,7 +29,13 @@ import {
 import { WEEKDAY_LABELS } from '../../types/court';
 import type { TableColumn } from '../../types/ui';
 import { toErrorMessage } from '../../utils/error';
-import { formatDateTime, formatMinute, formatMoney, majorToMinor, todayIso } from '../../utils/format';
+import {
+  formatDateTime,
+  formatMinute,
+  formatMoney,
+  majorToMinor,
+  todayIso,
+} from '../../utils/format';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Any status' },
@@ -45,7 +51,10 @@ const ACTION_COPY: Record<
   suspended: { title: 'Suspend this court?', confirm: 'Suspend', variant: 'secondary' },
 };
 
-const CURRENCY_OPTIONS = ['INR', 'USD', 'EUR', 'GBP', 'AED'].map(code => ({ value: code, label: code }));
+const CURRENCY_OPTIONS = ['INR', 'USD', 'EUR', 'GBP', 'AED'].map(code => ({
+  value: code,
+  label: code,
+}));
 
 const WEEKDAY_OPTIONS = WEEKDAY_LABELS.map((label, index) => ({ value: String(index), label }));
 
@@ -70,7 +79,11 @@ const priceSchema = z.object({
 
 const blackoutSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Choose a date'),
-  reason: z.string().trim().min(3, 'Give a short reason').max(500, 'Reason must be 500 characters or fewer'),
+  reason: z
+    .string()
+    .trim()
+    .min(3, 'Give a short reason')
+    .max(500, 'Reason must be 500 characters or fewer'),
 });
 
 type Panel = 'schedule' | 'pricing' | 'create' | null;
@@ -145,7 +158,9 @@ export function AdminCourtsPage() {
     {
       key: 'status',
       header: 'Status',
-      render: venue => <Badge tone={VENUE_STATUS_TONE[venue.status]}>{humanize(venue.status)}</Badge>,
+      render: venue => (
+        <Badge tone={VENUE_STATUS_TONE[venue.status]}>{humanize(venue.status)}</Badge>
+      ),
     },
     {
       key: 'timezone',
@@ -155,7 +170,9 @@ export function AdminCourtsPage() {
     {
       key: 'reviewed',
       header: 'Last reviewed',
-      render: venue => <span className="text-xs text-gray-500">{formatDateTime(venue.reviewedAt ?? '')}</span>,
+      render: venue => (
+        <span className="text-xs text-gray-500">{formatDateTime(venue.reviewedAt ?? '')}</span>
+      ),
     },
     {
       key: 'actions',
@@ -212,7 +229,9 @@ export function AdminCourtsPage() {
               },
               placeholder: 'Search court name…',
             }}
-            filters={[{ name: 'status', label: 'Status', options: STATUS_OPTIONS, hideLabel: true }]}
+            filters={[
+              { name: 'status', label: 'Status', options: STATUS_OPTIONS, hideLabel: true },
+            ]}
             values={{ status }}
             onFilterChange={(_name, value) => {
               setStatus(value);
@@ -251,7 +270,9 @@ export function AdminCourtsPage() {
         />
       </Modal>
 
-      {panel === 'schedule' && selected && <SchedulePanel venue={selected} onClose={() => setPanel(null)} />}
+      {panel === 'schedule' && selected && (
+        <SchedulePanel venue={selected} onClose={() => setPanel(null)} />
+      )}
 
       {panel === 'pricing' && selected && (
         <PricingPanel venue={selected} onClose={() => setPanel(null)} />
@@ -263,8 +284,8 @@ export function AdminCourtsPage() {
         description={
           moderation ? (
             <>
-              {moderation.venue.name} will become <strong>{humanize(moderation.action)}</strong>. Suspending
-              stops new bookings without deleting existing ones.
+              {moderation.venue.name} will become <strong>{humanize(moderation.action)}</strong>.
+              Suspending stops new bookings without deleting existing ones.
             </>
           ) : undefined
         }
@@ -308,7 +329,10 @@ function SchedulePanel({ venue, onClose }: PanelProps) {
         startMinute: toMinute(values.start),
         endMinute: toMinute(values.end),
       });
-      toast.success('Hours added', `${WEEKDAY_LABELS[Number(values.dayOfWeek)]} ${values.start}–${values.end}.`);
+      toast.success(
+        'Hours added',
+        `${WEEKDAY_LABELS[Number(values.dayOfWeek)]} ${values.start}–${values.end}.`
+      );
       reset();
       void schedule.refetch();
     } catch (cause) {
@@ -334,19 +358,28 @@ function SchedulePanel({ venue, onClose }: PanelProps) {
       {schedule.isLoading ? (
         <p className="text-sm text-gray-600">Loading hours…</p>
       ) : schedule.isError ? (
-        <Notice variant="danger">{toErrorMessage(schedule.error, 'Hours could not be loaded.')}</Notice>
+        <Notice variant="danger">
+          {toErrorMessage(schedule.error, 'Hours could not be loaded.')}
+        </Notice>
       ) : rules.length === 0 ? (
         <Notice variant="warning" title="No opening hours">
-          This court has no windows, so its availability will come back empty and nothing can be booked.
+          This court has no windows, so its availability will come back empty and nothing can be
+          booked.
         </Notice>
       ) : (
         <table className="w-full text-left text-sm">
           <caption className="sr-only">Configured opening hours by weekday</caption>
           <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
             <tr>
-              <th scope="col" className="px-4 py-2 font-semibold">Day</th>
-              <th scope="col" className="px-4 py-2 font-semibold">Opens</th>
-              <th scope="col" className="px-4 py-2 font-semibold">Closes</th>
+              <th scope="col" className="px-4 py-2 font-semibold">
+                Day
+              </th>
+              <th scope="col" className="px-4 py-2 font-semibold">
+                Opens
+              </th>
+              <th scope="col" className="px-4 py-2 font-semibold">
+                Closes
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -471,7 +504,9 @@ function PricingPanel({ venue, onClose }: PanelProps) {
       {schedule.isLoading ? (
         <p className="text-sm text-gray-600">Loading price rules…</p>
       ) : schedule.isError ? (
-        <Notice variant="danger">{toErrorMessage(schedule.error, 'Pricing could not be loaded.')}</Notice>
+        <Notice variant="danger">
+          {toErrorMessage(schedule.error, 'Pricing could not be loaded.')}
+        </Notice>
       ) : prices.length === 0 ? (
         <Notice variant="warning" title="No price rules">
           Without a price rule this court cannot be priced, so nothing will be bookable.
@@ -481,17 +516,29 @@ function PricingPanel({ venue, onClose }: PanelProps) {
           <caption className="sr-only">Configured price rules</caption>
           <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
             <tr>
-              <th scope="col" className="px-4 py-2 font-semibold">Amount</th>
-              <th scope="col" className="px-4 py-2 font-semibold">Unit</th>
-              <th scope="col" className="px-4 py-2 font-semibold">Applies</th>
-              <th scope="col" className="px-4 py-2 font-semibold">Priority</th>
+              <th scope="col" className="px-4 py-2 font-semibold">
+                Amount
+              </th>
+              <th scope="col" className="px-4 py-2 font-semibold">
+                Unit
+              </th>
+              <th scope="col" className="px-4 py-2 font-semibold">
+                Applies
+              </th>
+              <th scope="col" className="px-4 py-2 font-semibold">
+                Priority
+              </th>
             </tr>
           </thead>
           <tbody>
             {prices.map(rule => (
               <tr key={rule._id} className="border-t border-gray-100">
-                <td className="px-4 py-2 font-medium">{formatMoney(rule.amountMinor, rule.currency)}</td>
-                <td className="px-4 py-2">{rule.pricingUnit === 'hour' ? 'Per hour' : 'Per booking'}</td>
+                <td className="px-4 py-2 font-medium">
+                  {formatMoney(rule.amountMinor, rule.currency)}
+                </td>
+                <td className="px-4 py-2">
+                  {rule.pricingUnit === 'hour' ? 'Per hour' : 'Per booking'}
+                </td>
                 <td className="px-4 py-2 text-xs text-gray-500">
                   {rule.dayOfWeek === undefined
                     ? 'Every day'
@@ -563,7 +610,9 @@ function PricingPanel({ venue, onClose }: PanelProps) {
 
       <form onSubmit={addBlackout} className="mt-6 space-y-4 border-t border-gray-100 pt-5">
         <h3 className="font-semibold text-slate-950">Close this court for a date</h3>
-        <p className="text-sm text-gray-600">Blackouts remove the court from availability for the day.</p>
+        <p className="text-sm text-gray-600">
+          Blackouts remove the court from availability for the day.
+        </p>
 
         <Input
           label="Date"

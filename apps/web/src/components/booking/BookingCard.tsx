@@ -32,7 +32,10 @@ export function BookingCard({ booking, venueName, to }: BookingCardProps) {
   const title = venueName ?? 'Court booking';
 
   return (
-    <Link to={to ?? `/bookings/${booking._id}`} className="card block p-5 transition hover:border-primary-300">
+    <Link
+      to={to ?? `/bookings/${booking._id}`}
+      className="card block p-5 transition hover:border-primary-300"
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-semibold text-slate-950">{title}</p>
@@ -44,7 +47,9 @@ export function BookingCard({ booking, venueName, to }: BookingCardProps) {
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <Badge tone={BOOKING_STATUS_TONE[booking.status]}>{bookingStatusLabel(booking.status)}</Badge>
+          <Badge tone={BOOKING_STATUS_TONE[booking.status]}>
+            {bookingStatusLabel(booking.status)}
+          </Badge>
           <span className="text-xs text-gray-400">{booking.publicReference}</span>
         </div>
       </div>
@@ -70,17 +75,19 @@ export function BookingSummaryCard({
     <Card className={className}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-700">Booking detail</p>
-          <h1 className="mt-2 text-3xl font-bold text-slate-950">
-            {venueName ?? 'Court booking'}
-          </h1>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-700">
+            Booking detail
+          </p>
+          <h1 className="mt-2 text-3xl font-bold text-slate-950">{venueName ?? 'Court booking'}</h1>
           <p className="mt-1 text-sm text-gray-500">
             {booking.publicReference}
             {pitchName ? ` · ${pitchName}` : ''}
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <Badge tone={BOOKING_STATUS_TONE[booking.status]}>{bookingStatusLabel(booking.status)}</Badge>
+          <Badge tone={BOOKING_STATUS_TONE[booking.status]}>
+            {bookingStatusLabel(booking.status)}
+          </Badge>
           <Badge tone={PAYMENT_STATUS_TONE[booking.paymentStatus]}>
             {paymentStatusLabel(booking.paymentStatus)}
           </Badge>
@@ -120,7 +127,10 @@ export function BookingNotFound() {
   return (
     <Card className="text-center">
       <p className="text-sm text-gray-600">We could not find that booking.</p>
-      <Link to="/bookings" className="mt-3 inline-block font-semibold text-primary-700 hover:underline">
+      <Link
+        to="/bookings"
+        className="mt-3 inline-block font-semibold text-primary-700 hover:underline"
+      >
         Back to your bookings
       </Link>
     </Card>

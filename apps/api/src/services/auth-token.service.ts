@@ -88,10 +88,7 @@ export async function issueAuthToken(
  * Reads a token without redeeming it. Used to reject an impossible password
  * choice *before* the link is burned, so the caller can simply try again.
  */
-export async function peekAuthToken(
-  token: string,
-  purpose: AuthTokenPurpose
-): Promise<string> {
+export async function peekAuthToken(token: string, purpose: AuthTokenPurpose): Promise<string> {
   const existing = await AuthTokenModel.findOne({
     purpose,
     tokenHash: hashAuthToken(token),
@@ -102,7 +99,11 @@ export async function peekAuthToken(
     throw new ApiError(400, 'AUTH_TOKEN_INVALID', 'This link is invalid or has already been used');
   }
   if (existing.expiresAt.getTime() <= Date.now()) {
-    throw new ApiError(400, 'AUTH_TOKEN_EXPIRED', 'This link has expired, please request a new one');
+    throw new ApiError(
+      400,
+      'AUTH_TOKEN_EXPIRED',
+      'This link has expired, please request a new one'
+    );
   }
 
   return existing.userId.toString();
@@ -113,10 +114,7 @@ export async function peekAuthToken(
  * for unknown, already-redeemed and malformed tokens so a caller cannot probe
  * which tokens ever existed.
  */
-export async function consumeAuthToken(
-  token: string,
-  purpose: AuthTokenPurpose
-): Promise<string> {
+export async function consumeAuthToken(token: string, purpose: AuthTokenPurpose): Promise<string> {
   const tokenHash = hashAuthToken(token);
 
   const consumed = await AuthTokenModel.findOneAndUpdate(
@@ -131,7 +129,11 @@ export async function consumeAuthToken(
     throw new ApiError(400, 'AUTH_TOKEN_INVALID', 'This link is invalid or has already been used');
   }
   if (existing.expiresAt.getTime() <= Date.now()) {
-    throw new ApiError(400, 'AUTH_TOKEN_EXPIRED', 'This link has expired, please request a new one');
+    throw new ApiError(
+      400,
+      'AUTH_TOKEN_EXPIRED',
+      'This link has expired, please request a new one'
+    );
   }
 
   /* c8 ignore next 2 */

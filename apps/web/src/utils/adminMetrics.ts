@@ -79,8 +79,7 @@ export function summariseRevenue(report: AdminReport | undefined): RevenueSummar
     bucket.amountMinor > best.amountMinor ? bucket : best
   );
   const currency = dominant._id;
-  const refundedMinor =
-    report?.refunds.find(bucket => bucket._id === currency)?.amountMinor ?? 0;
+  const refundedMinor = report?.refunds.find(bucket => bucket._id === currency)?.amountMinor ?? 0;
 
   return {
     currency,
@@ -209,7 +208,9 @@ export function buildMetrics(input: {
             revenue.refundedMinor,
             revenue.currency
           )} refunded, from confirmed and completed bookings.${
-            revenue.mixed ? ` Other currencies with value: ${revenue.otherCurrencies.join(', ')}.` : ''
+            revenue.mixed
+              ? ` Other currencies with value: ${revenue.otherCurrencies.join(', ')}.`
+              : ''
           }`
         : 'No confirmed or completed bookings yet.',
       tone: revenue && revenue.netMinor > 0 ? 'positive' : 'default',
@@ -265,7 +266,10 @@ export function revenueByCurrency(report: AdminReport | undefined) {
 }
 
 /** Utilisation chart rows keyed by a short venue label. */
-export function utilisationChartData(report: AdminReport | undefined, labelFor: (id: string) => string) {
+export function utilisationChartData(
+  report: AdminReport | undefined,
+  labelFor: (id: string) => string
+) {
   return utilisationRows(report)
     .slice(0, 12)
     .map(row => ({

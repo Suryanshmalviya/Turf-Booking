@@ -1,4 +1,4 @@
-import { type ToastInput,useToastStore } from '../store/toast.store';
+import { type ToastInput, useToastStore } from '../store/toast.store';
 
 export interface ToastApi {
   push: (toast: ToastInput) => string;

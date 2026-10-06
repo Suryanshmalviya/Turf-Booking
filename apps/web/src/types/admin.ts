@@ -26,7 +26,13 @@ export const USER_ROLES = ['customer', 'venue_owner', 'venue_staff', 'admin'] as
 export type AdminUserRole = (typeof USER_ROLES)[number];
 
 /** Mirrors `VENUE_STATUSES` in `apps/api/src/types/enums.ts`. */
-export const VENUE_STATUSES = ['draft', 'pending_review', 'active', 'rejected', 'suspended'] as const;
+export const VENUE_STATUSES = [
+  'draft',
+  'pending_review',
+  'active',
+  'rejected',
+  'suspended',
+] as const;
 
 export type AdminVenueStatus = (typeof VENUE_STATUSES)[number];
 

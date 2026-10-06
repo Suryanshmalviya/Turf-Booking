@@ -30,7 +30,9 @@ router.get('/database', adminController.database);
 router.post(
   '/database/seed',
   requireCsrf,
-  rateLimit(createLimiter(2, 'ADMIN_SEED_RATE_LIMITED', 'Seeding is limited to 2 requests per window')),
+  rateLimit(
+    createLimiter(2, 'ADMIN_SEED_RATE_LIMITED', 'Seeding is limited to 2 requests per window')
+  ),
   adminController.seed
 );
 
@@ -56,8 +58,18 @@ router.get('/bookings/:bookingId/payments', adminController.bookingPayments);
 router.get('/reports', validate(adminReportSchema), adminController.report);
 router.get('/exports/bookings', validate(adminExportSchema), adminController.exportBookingRows);
 
-router.post('/venues/:venueId/:action', requireCsrf, validate(adminVenueActionSchema), adminController.action);
-router.post('/courts/:venueId/:action', requireCsrf, validate(adminVenueActionSchema), adminController.action);
+router.post(
+  '/venues/:venueId/:action',
+  requireCsrf,
+  validate(adminVenueActionSchema),
+  adminController.action
+);
+router.post(
+  '/courts/:venueId/:action',
+  requireCsrf,
+  validate(adminVenueActionSchema),
+  adminController.action
+);
 
 router.post(
   '/notifications/process',

@@ -18,7 +18,16 @@ export interface FieldProps {
  * Label + control + hint/error scaffolding shared by every form control so
  * spacing and accessibility attributes stay consistent.
  */
-export function Field({ id, label, hint, error, required, hideLabel, className, children }: FieldProps) {
+export function Field({
+  id,
+  label,
+  hint,
+  error,
+  required,
+  hideLabel,
+  className,
+  children,
+}: FieldProps) {
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
 
   return (
