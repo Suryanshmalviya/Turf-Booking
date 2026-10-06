@@ -2,6 +2,7 @@
   "name": "pickleball-booking",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "npm@11.6.0",
   "description": "Production-grade pickleball court booking platform (MERN monorepo).",
   "workspaces": [
     "apps/*",

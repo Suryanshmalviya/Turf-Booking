@@ -10,7 +10,9 @@
 # validates in production.
 
 services:
-  # API Web Service
+  # API Web Service (NOT a Static Site — this service runs Node, it does not
+  # publish a static directory. Do not set a Publish Directory in the Render
+  # dashboard; that field must stay empty for `type: web` services).
   - type: web
     name: pickleball-api
     env: node
@@ -18,8 +20,12 @@ services:
     # `--include=dev` is mandatory: Render sets NODE_ENV=production, which makes
     # npm skip devDependencies by default — but the build below needs esbuild
     # (a devDependency). Runtime still only needs the bundled dist output.
-    buildCommand: npm install --include=dev && npm run build:api
+    # `npm ci` (not `yarn install`) matches the committed package-lock.json;
+    # the `packageManager: npm@11.6.0` pin in package.json keeps the version
+    # stable. Manual dashboard Build Command overrides must match this line.
+    buildCommand: npm ci --include=dev && npm run build:api
     startCommand: npm run start:api
+    healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_ENV
         value: production
