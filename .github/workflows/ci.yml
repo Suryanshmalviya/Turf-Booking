@@ -12,15 +12,15 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '20.x'
+  NODE_VERSION: '24.x'
 
 jobs:
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -32,8 +32,8 @@ jobs:
     name: ESLint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -45,8 +45,8 @@ jobs:
     name: Prettier
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -69,10 +69,10 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -93,10 +93,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -112,8 +112,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [typecheck, eslint, prettier, test-api, test-web]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -122,7 +122,7 @@ jobs:
         run: npm run build
 
       - name: Upload API build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: api-dist
           path: apps/api/dist
@@ -130,7 +130,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload web build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: web-dist
           path: apps/web/dist
@@ -142,8 +142,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [typecheck, eslint, test-api, test-web]
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
 
       # Fails if docker-compose.yml cannot be parsed or a required variable is
       # missing, without needing to start any container.
@@ -157,7 +157,7 @@ jobs:
           ADMIN_PASSWORD: compose-validation-only
 
       - name: Build API image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/api.Dockerfile
@@ -168,7 +168,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build web image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/web.Dockerfile
@@ -181,21 +181,30 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Smoke test the API image
+        # Compose supplies what the API needs to actually boot: a healthy
+        # MongoDB (startServer awaits connectDatabase before listening), the
+        # required JWT/admin secrets, and NODE_ENV=development — the config
+        # schema rejects NODE_ENV=production unless AUTH_COOKIE_SECURE=true,
+        # which the image does not set. `API_IMAGE` swaps in the fresh build.
         run: |
-          docker run -d --name api-smoke -p 4000:4000 \
-            -e JWT_SECRET=smoke-test-secret-value-at-least-32-chars \
-            -e JWT_REFRESH_SECRET=smoke-test-refresh-secret-32-chars-min \
-            -e MONGODB_URI=mongodb://127.0.0.1:27017/unused \
-            pickleball-api:ci
-          for i in $(seq 1 30); do
+          API_IMAGE=pickleball-api:ci docker compose -f docker-compose.yml up -d mongodb api
+          for i in $(seq 1 60); do
             if curl -fsS http://localhost:4000/api/v1/health; then
-              echo "\nAPI image responded to the health check."
-              docker rm -f api-smoke
+              echo ""
+              echo "API image responded to the health check."
+              docker compose -f docker-compose.yml down -v
               exit 0
             fi
             sleep 2
           done
           echo "API image never became healthy."
-          docker logs api-smoke
-          docker rm -f api-smoke
+          docker logs pickleball-api || true
+          docker compose -f docker-compose.yml down -v
           exit 1
+        env:
+          # Same throwaway values the compose-validation step above uses.
+          MONGO_INITDB_ROOT_PASSWORD: compose-validation-only
+          MONGO_EXPRESS_PASSWORD: compose-validation-only
+          JWT_SECRET: compose-validation-only-secret-32-chars-min
+          JWT_REFRESH_SECRET: compose-validation-only-secret-32-chars-min
+          ADMIN_PASSWORD: compose-validation-only

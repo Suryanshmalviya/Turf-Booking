@@ -18,7 +18,12 @@
 # must be supplied at run time via `docker compose`, `docker run -e`, or a
 # mounted env file. `.dockerignore` also blocks `.env*` from the build context.
 
-ARG NODE_VERSION=20.18.1
+# Node 24 (active LTS). Node 20 is EOL (April 2026) and node:20.18.x images
+# carry known CRITICAL CVEs — CVE-2026-31789 (openssl) and CVE-2026-59873
+# (npm's bundled tar) — which fail the Trivy `Fail on critical findings` gate.
+# The floating major tag keeps base-image security patches flowing; every
+# build is re-verified by the Trivy scan in the Security workflow.
+ARG NODE_VERSION=24
 
 # ─── base ────────────────────────────────────────────────────────────────────
 FROM node:${NODE_VERSION}-alpine AS base

@@ -18,7 +18,9 @@
 #
 #   docker build -f docker/web.Dockerfile --build-arg VITE_API_URL=https://api.example.com/api/v1 .
 
-ARG NODE_VERSION=20.18.1
+# Node 24 (active LTS) to match the API image and CI; Node 20 is EOL.
+# Build-stage only — the runtime here is nginx, see below.
+ARG NODE_VERSION=24
 ARG NGINX_VERSION=1.27.3-alpine
 
 # ─── deps ────────────────────────────────────────────────────────────────────
