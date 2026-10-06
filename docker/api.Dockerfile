@@ -53,8 +53,12 @@ COPY package.json package-lock.json ./
 COPY apps/api/package.json ./apps/api/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY packages/shared/package.json ./packages/shared/package.json
+# `--include=dev` is mandatory: base sets NODE_ENV=production, which makes npm
+# skip devDependencies by default — but esbuild and typescript (used by the
+# build stage below) are dev deps. Without this flag the build stage fails
+# with `esbuild: not found` (exit code 127).
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+    npm ci --include=dev
 
 # ─── build ───────────────────────────────────────────────────────────────────
 FROM deps AS build

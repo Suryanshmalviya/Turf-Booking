@@ -37,23 +37,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Assert CI succeeded for this commit
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
+            // CD and CI trigger at the same second on a push, so a completed CI
+            // run for this commit may not exist yet. Poll until it completes
+            // instead of failing immediately on a run still in progress.
             const sha = context.sha;
-            const { data } = await github.rest.actions.listWorkflowRuns({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'ci.yml',
-              head_sha: sha,
-              status: 'completed',
-              per_page: 20,
-            });
-            const run = data.workflow_runs?.find(r => r.name === 'CI' && r.conclusion === 'success');
-            if (!run) {
-              core.setFailed(`No successful CI run found for ${sha}.`);
-            } else {
-              core.info(`CI succeeded: ${run.html_url}`);
+            const deadline = Date.now() + 45 * 60 * 1000;
+            const pollMs = 30 * 1000;
+
+            while (true) {
+              const { data } = await github.rest.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'ci.yml',
+                head_sha: sha,
+                status: 'completed',
+                per_page: 20,
+              });
+              const run = data.workflow_runs?.find(r => r.name === 'CI');
+              if (run) {
+                if (run.conclusion === 'success') {
+                  core.info(`CI succeeded: ${run.html_url}`);
+                } else {
+                  core.setFailed(
+                    `CI did not succeed for ${sha} (conclusion: ${run.conclusion}): ${run.html_url}`,
+                  );
+                }
+                break;
+              }
+              if (Date.now() >= deadline) {
+                core.setFailed(`Timed out waiting for CI to complete for ${sha}.`);
+                break;
+              }
+              core.info('CI has not completed for this commit yet; waiting 30s...');
+              await new Promise(resolve => setTimeout(resolve, pollMs));
             }
 
   build:
