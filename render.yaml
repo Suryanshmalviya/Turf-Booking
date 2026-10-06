@@ -15,10 +15,10 @@ services:
     name: pickleball-api
     env: node
     plan: free
-    # `--include-dev` is mandatory: Render sets NODE_ENV=production, which makes
+    # `--include=dev` is mandatory: Render sets NODE_ENV=production, which makes
     # npm skip devDependencies by default — but the build below needs esbuild
     # (a devDependency). Runtime still only needs the bundled dist output.
-    buildCommand: npm install --include-dev && npm run build:api
+    buildCommand: npm install --include=dev && npm run build:api
     startCommand: npm run start:api
     envVars:
       - key: NODE_ENV
