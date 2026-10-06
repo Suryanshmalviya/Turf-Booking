@@ -80,7 +80,7 @@ jobs:
           tags: pickleball-api:scan
 
       - name: Scan API image for OS and language vulnerabilities
-        uses: aquasecurity/trivy-action@v0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: pickleball-api:scan
           format: sarif
@@ -96,7 +96,7 @@ jobs:
           category: trivy-api
 
       - name: Fail on critical findings
-        uses: aquasecurity/trivy-action@v0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: pickleball-api:scan
           format: table
