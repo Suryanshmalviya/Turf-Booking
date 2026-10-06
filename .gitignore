@@ -37,3 +37,6 @@ coverage/
 # Misc
 *.tgz
 .cache/
+
+# Vercel CLI
+.vercel/

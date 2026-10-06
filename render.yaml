@@ -1,3 +1,14 @@
+# Render deployment blueprint for the API.
+#
+# The web frontend deploys separately on Vercel (vercel.json at the repo root):
+#   - Vercel project env var: VITE_API_URL = https://<this-service>.onrender.com/api/v1
+#     (build-time value; the client falls back to same-origin /api/v1 if unset)
+#   - This service env var:  FRONTEND_URL = https://<your-app>.vercel.app
+#     (CORS allows exactly one origin — it must match the Vercel origin)
+# Split-origin cookie sessions are already configured below:
+# AUTH_COOKIE_SECURE=true + AUTH_COOKIE_SAME_SITE=none, which the config schema
+# validates in production.
+
 services:
   # API Web Service
   - type: web
@@ -11,7 +22,7 @@ services:
         value: production
       - key: PORT
         value: 10000
-      # Required for cross-origin (static site + API) cookie sessions in production.
+      # Required for cross-origin (Vercel web + Render API) cookie sessions.
       - key: AUTH_COOKIE_SECURE
         value: 'true'
       - key: AUTH_COOKIE_SAME_SITE
@@ -22,19 +33,6 @@ services:
         generateValue: true
       - key: JWT_REFRESH_SECRET
         generateValue: true
+      # CORS origin: set to the Vercel site origin (https://<app>.vercel.app).
       - key: FRONTEND_URL
         sync: false
-
-  # Web Static Site
-  - type: web
-    name: pickleball-web
-    env: static
-    buildCommand: npm install && npm run build:web
-    staticPublishPath: ./apps/web/dist
-    envVars:
-      - key: VITE_API_URL
-        sync: false
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
