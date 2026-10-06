@@ -4,7 +4,7 @@ Two supported deployment paths ship with the repository: **Render** (`render.yam
 
 ## Production prerequisites
 
-- Node.js ≥ 20 and npm ≥ 10 (Render/native path)
+- Node.js 24.x and npm ≥ 10 (Render/native path)
 - Docker + Docker Compose v2 (container path)
 - MongoDB 6+ **as a replica set** (transactions are mandatory for booking holds) — MongoDB Atlas satisfies this
 - TLS termination in front of the app (`AUTH_COOKIE_SECURE=true` refuses to boot otherwise)
@@ -87,10 +87,9 @@ curl -fsS http://localhost:8080/healthz           # web (nginx)
 
 ## Path B — Render
 
-`render.yaml` defines:
+`render.yaml` defines a single Node web service (the static frontend deploys separately on Vercel — see the header above):
 
-- **`pickleball-api`** (Node web service): `npm install && npm run build:api` → `npm run start:api`; `PORT=10000`; `AUTH_COOKIE_SECURE=true`, `AUTH_COOKIE_SAME_SITE=none`; JWT secrets auto-generated; `MONGODB_URI` and `FRONTEND_URL` marked `sync: false` (set them in the dashboard).
-- **`pickleball-web`** (static site): `npm install && npm run build:web`, publishes `./apps/web/dist`, SPA rewrite `/* → /index.html`; set `VITE_API_URL` to the API origin + `/api/v1`.
+- **`pickleball-api`** (Node web service): `npm install --include=dev && npm run build:api` → `npm run start:api`; `PORT=10000`; `AUTH_COOKIE_SECURE=true`, `AUTH_COOKIE_SAME_SITE=none`; JWT secrets auto-generated; `MONGODB_URI` and `FRONTEND_URL` marked `sync: false` (set them in the dashboard).
 
 Because the static site and API are separate origins, cookies require `SameSite=None; Secure` (already set by the blueprint) and `FRONTEND_URL` must match the site origin exactly (CORS allows only that origin).
 
@@ -125,6 +124,10 @@ Because the static site and API are separate origins, cookies require `SameSite=
 - **Database**: schema changes must be backward-compatible with the previous release (expand → migrate → contract), because an API rollback does not revert collections.
 
 ## Troubleshooting
+
+### `MODULE_NOT_FOUND .../apps/api/dist/server.js` at start
+
+The build step failed to emit `dist/server.js`. With `NODE_ENV=production`, npm skips devDependencies by default, so `esbuild` (a devDependency) must be installed with `npm install --include=dev`. The `--include-dev` alias is not a valid npm flag and is silently ignored. Rebuild and confirm `dist/server.js` exists before starting.
 
 | Symptom                                  | Action                                                                                       |
 | ---------------------------------------- | -------------------------------------------------------------------------------------------- |
