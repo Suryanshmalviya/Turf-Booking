@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, writeSync } from 'node:fs';
 import path from 'node:path';
 
 import dotenv from 'dotenv';
@@ -260,7 +260,23 @@ export function loadConfig(environment: NodeJS.ProcessEnv = process.env): Config
   };
 }
 
-export const config = loadConfig();
+let configInstance: Config;
+try {
+  configInstance = loadConfig();
+} catch (error) {
+  const message =
+    error instanceof z.ZodError
+      ? `Invalid environment variables:\n${error
+          .issues.map((issue) => `  - ${issue.path.join('.') ?? 'root'}: ${issue.message}`)
+          .join('\n')}\n\n` +
+        'Check Render service env vars: MONGODB_URI, JWT_SECRET (>=32 chars), JWT_REFRESH_SECRET (>=32 chars), AUTH_COOKIE_SECURE=true when SameSite=none or NODE_ENV=production.'
+      : error instanceof Error
+      ? error.message
+      : String(error);
+  writeSync(2, `FATAL config error: ${message}\n`);
+  process.exit(1);
+}
+export const config = configInstance;
 export const logger = createLogger({ log: config.log, nodeEnv: config.nodeEnv });
 export const isDevelopment = config.nodeEnv === 'development';
 export const isProduction = config.nodeEnv === 'production';
