@@ -1,0 +1,9 @@
+export * as admin from './admin.controller';
+export * as auth from './auth.controller';
+export * as bookings from './bookings.controller';
+export * as courts from './courts.controller';
+export * as health from './health.controller';
+export * as notifications from './notifications.controller';
+export * as payments from './payments.controller';
+export * as reviews from './reviews.controller';
+export * as users from './users.controller';

@@ -1,0 +1,40 @@
+services:
+  # API Web Service
+  - type: web
+    name: pickleball-api
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build:api
+    startCommand: npm run start:api
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Required for cross-origin (static site + API) cookie sessions in production.
+      - key: AUTH_COOKIE_SECURE
+        value: 'true'
+      - key: AUTH_COOKIE_SAME_SITE
+        value: none
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+
+  # Web Static Site
+  - type: web
+    name: pickleball-web
+    env: static
+    buildCommand: npm install && npm run build:web
+    staticPublishPath: ./apps/web/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -1,0 +1,133 @@
+name: Security
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Weekly re-scan so newly published advisories surface even on a quiet repo.
+    # Runs at 03:17 UTC to avoid the top-of-hour GitHub Actions rush.
+    - cron: '17 3 * * 1'
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  dependency-audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+
+      # Production dependencies only: dev tooling is not shipped to users, so it
+      # must not block a release.
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      # Reported for visibility; dev-only advisories are surfaced but not fatal.
+      - name: Audit all dependencies
+        run: npm audit --audit-level=critical
+        continue-on-error: true
+
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'
+
+  container-scan:
+    name: Container Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/api.Dockerfile
+          push: false
+          load: true
+          tags: pickleball-api:scan
+
+      - name: Scan API image for OS and language vulnerabilities
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: pickleball-api:scan
+          format: sarif
+          output: trivy-api.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+
+      - name: Upload API scan results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-api.sarif
+          category: trivy-api
+
+      - name: Fail on critical findings
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: pickleball-api:scan
+          format: table
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+
+  secret-scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so a secret that was committed and later removed is
+          # still detected.
+          fetch-depth: 0
+
+      # Guards the specific secrets this project must never commit.
+      - name: Fail if a real .env file is tracked
+        run: |
+          if git ls-files --error-unmatch .env .env.production .env.local >/dev/null 2>&1; then
+            echo "::error::A .env file is tracked in git. Remove it and rotate any secrets it contained."
+            git ls-files | grep -E '(^|/)\.env($|\.)' || true
+            exit 1
+          fi
+          echo "No .env file is tracked."
+
+      - name: Scan repository history for secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Requires the org/repo to enable GitHub secret scanning and push
+          # protection; the job is informational when it is not available.
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: 'false'

@@ -1,0 +1,33 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+**/dist
+**/build
+**/*.tsbuildinfo
+
+# Test / coverage artifacts
+**/coverage
+**/.nyc_output
+
+# Version control & editor
+.git
+.gitignore
+.github
+.vscode
+.idea
+
+# Local environment files (never bake secrets into images)
+.env
+.env.*
+!.env.example
+
+# Logs & OS cruft
+*.log
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed inside runtime images)
+docs
+**/*.md

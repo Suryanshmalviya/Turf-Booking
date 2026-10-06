@@ -1,0 +1,147 @@
+# Local development stack: MongoDB + API + Web.
+#
+#   cp .env.example .env      # then fill in the values; never commit .env
+#   docker compose up -d --build
+#
+# Every value comes from environment variables. Compose interpolates ${VAR} from
+# the shell or from the (git-ignored) .env file next to this one, and `.env`
+# example values are safe defaults for local development ONLY.
+#
+# Secrets (MONGODB_URI credentials, JWT secrets, payment secrets) are supplied
+# purely at run time. Nothing here is committed, and the Dockerfiles never bake
+# environment values into the image layers.
+
+name: pickleball-booking
+
+services:
+  # ─── MongoDB ───────────────────────────────────────────────────────────────
+  mongodb:
+    image: mongo:7.0
+    container_name: pickleball-mongodb
+    restart: unless-stopped
+    command: ['--bind_ip_all']
+    ports:
+      # Bound to localhost so the dev database is never exposed on the network.
+      - '127.0.0.1:${MONGO_HOST_PORT:-27017}:27017'
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-pickleball_booking}
+      # Authentication is on. Provide real credentials in .env for anything
+      # beyond a throwaway local machine.
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-pickleball}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?set MONGO_INITDB_ROOT_PASSWORD in .env}
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'mongosh --quiet --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval ''db.adminCommand("ping").ok'' | grep -q 1'
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - pickleball
+
+  # ─── API ───────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    # CI/CD publishes these tags; docker-compose defaults to a local build.
+    image: ${API_IMAGE:-pickleball-api:local}
+    container_name: pickleball-api
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:${API_HOST_PORT:-4000}:4000'
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: '4000'
+      API_VERSION: ${API_VERSION:-v1}
+      API_PREFIX: ${API_PREFIX:-/api/v1}
+      # Served through the web container's nginx proxy at http://localhost:8080
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_FORMAT: ${LOG_FORMAT:-pretty}
+      # ── Secrets: read from .env / shell, never committed ────────────────────
+      # Builds the Mongo URI from the same credentials the mongodb service uses
+      # so the two can never drift apart.
+      MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME:-pickleball}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/${MONGO_INITDB_DATABASE:-pickleball_booking}?authSource=admin
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?set JWT_REFRESH_SECRET in .env}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@pickleball.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-unselected}
+      PAYMENT_WEBHOOK_SECRET: ${PAYMENT_WEBHOOK_SECRET:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+    networks:
+      - pickleball
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+
+  # ─── Web (nginx) ───────────────────────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        # Build-time only. Defaults to the same-origin path that nginx proxies.
+        VITE_API_URL: ${VITE_API_URL:-/api/v1}
+    # CI/CD publishes these tags; docker-compose defaults to a local build.
+    image: ${WEB_IMAGE:-pickleball-web:local}
+    container_name: pickleball-web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - '${WEB_HOST_PORT:-8080}:80'
+    environment:
+      # Rendered into the nginx config at container start.
+      API_UPSTREAM_HOST: api
+      API_UPSTREAM_PORT: '4000'
+    networks:
+      - pickleball
+    security_opt:
+      - no-new-privileges:true
+
+# ─── Optional MongoDB admin UI (profile: tools) ─────────────────────────────
+  # Deliberately NOT in the default profile so `docker compose up` never starts
+  # a database browser with a hard-coded password. Enable explicitly:
+  #   docker compose --profile tools up -d
+  mongo-express:
+    profiles:
+      - tools
+    image: mongo-express:1.0.2
+    container_name: pickleball-mongodb-express
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:${MONGO_EXPRESS_HOST_PORT:-8081}:8081'
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: '27017'
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME:-pickleball}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?set MONGO_INITDB_ROOT_PASSWORD in .env}
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USER:-admin}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD:?set MONGO_EXPRESS_PASSWORD in .env}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - pickleball
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+
+networks:
+  pickleball:
+    driver: bridge

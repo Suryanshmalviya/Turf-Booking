@@ -1,0 +1,201 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Only create a new run when nothing else is pending for the same ref.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - name: Typecheck all workspaces
+        run: npm run typecheck
+
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - name: Lint all workspaces
+        run: npm run lint
+
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - name: Check formatting
+        run: npm run format:check
+
+  test-api:
+    name: API Tests
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run API tests
+        run: npm run test --workspace=apps/api
+        env:
+          MONGODB_URI: mongodb://localhost:27017/pickleball_booking_test
+          JWT_SECRET: test-secret-key-for-testing-only-min-32-chars
+          JWT_REFRESH_SECRET: test-refresh-secret-key-for-testing-only-min-32-chars
+          NODE_ENV: test
+
+  test-web:
+    name: Web Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run web tests
+        run: npm run test --workspace=apps/web
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [typecheck, eslint, prettier, test-api, test-web]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - name: Build all packages
+        run: npm run build
+
+      - name: Upload API build
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-dist
+          path: apps/api/dist
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Upload web build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: apps/web/dist
+          retention-days: 7
+          if-no-files-found: error
+
+  docker:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: [typecheck, eslint, test-api, test-web]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      # Fails if docker-compose.yml cannot be parsed or a required variable is
+      # missing, without needing to start any container.
+      - name: Validate compose file
+        run: docker compose -f docker-compose.yml config --quiet
+        env:
+          MONGO_INITDB_ROOT_PASSWORD: compose-validation-only
+          MONGO_EXPRESS_PASSWORD: compose-validation-only
+          JWT_SECRET: compose-validation-only-secret-32-chars-min
+          JWT_REFRESH_SECRET: compose-validation-only-secret-32-chars-min
+          ADMIN_PASSWORD: compose-validation-only
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/api.Dockerfile
+          push: false
+          load: true
+          tags: pickleball-api:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build web image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/web.Dockerfile
+          push: false
+          load: true
+          tags: pickleball-web:ci
+          build-args: |
+            VITE_API_URL=/api/v1
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test the API image
+        run: |
+          docker run -d --name api-smoke -p 4000:4000 \
+            -e JWT_SECRET=smoke-test-secret-value-at-least-32-chars \
+            -e JWT_REFRESH_SECRET=smoke-test-refresh-secret-32-chars-min \
+            -e MONGODB_URI=mongodb://127.0.0.1:27017/unused \
+            pickleball-api:ci
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:4000/api/v1/health; then
+              echo "\nAPI image responded to the health check."
+              docker rm -f api-smoke
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API image never became healthy."
+          docker logs api-smoke
+          docker rm -f api-smoke
+          exit 1
